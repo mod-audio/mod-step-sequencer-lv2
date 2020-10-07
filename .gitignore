@@ -1,0 +1,7 @@
+bin
+build
+*.so
+tags
+*.sh
+*.o
+*.d
