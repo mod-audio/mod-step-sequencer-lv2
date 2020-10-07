@@ -63,6 +63,7 @@ public:
 	void setLFO1depth(float value);
 	void setConnectLfo2(int value);
 	void setLFO2depth(float value);
+	void setPanic(bool value);
 	void setEnabled(bool value);
 	int getNotemode() const;
 	int getMode() const;
@@ -83,6 +84,7 @@ public:
 	float getLFO1depth() const;
 	int getConnectLfo2() const;
 	float getLFO2depth() const;
+	bool getPanic() const;
 	bool getEnabled() const;
 
 	void transmitHostInfo(const bool playing, const float beatsPerBar,
@@ -96,6 +98,7 @@ private:
 	int notesPressed = 0;
 	int activeNotes = 0;
 	int notePlayed = 0;
+	int octaveMode = 0;
 
     uint8_t midiNotes[NUM_VOICES][2];
     uint8_t midiNotesBypassed[NUM_VOICES];
@@ -145,7 +148,8 @@ private:
 	int lFO1depth = 0;
 	int connectLfo2 = 0;
 	int lFO2depth = 0;
-	bool enabled = true;
+	bool sequencerEnabled = true;
+	bool panic = false;
 
 	SeqUtils utils;
 	Pattern **SeqPattern;

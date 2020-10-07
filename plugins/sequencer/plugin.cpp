@@ -1,4 +1,5 @@
 #include "plugin.hpp"
+#include <iostream>
 
 START_NAMESPACE_DISTRHO
 
@@ -165,8 +166,8 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			parameter.symbol     = "swing";
 			parameter.unit       = "";
 			parameter.ranges.def = 0.f;
-			parameter.ranges.min = -0.75f;
-			parameter.ranges.max = 0.75f;
+			parameter.ranges.min = -1.0f;
+			parameter.ranges.max = 1.0f;
 			break;
 		case paramRandomizeTiming:
 			parameter.hints      = kParameterIsAutomable;
@@ -421,6 +422,15 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			parameter.ranges.min = 0.f;
 			parameter.ranges.max = 100.f;
 			break;
+		case paramPanic:
+			parameter.hints      = kParameterIsBoolean | kParameterIsTrigger;
+			parameter.name       = "LFO 2 Depth";
+			parameter.symbol     = "lfo2Depth";
+			parameter.unit       = "";
+			parameter.ranges.def = 0;
+			parameter.ranges.min = 0;
+			parameter.ranges.max = 1;
+			break;
 		case paramEnabled:
 			parameter.hints      = kParameterIsBoolean;
 			parameter.name       = "Enabled";
@@ -503,6 +513,8 @@ float PluginSequencer::getParameterValue(uint32_t index) const
 			return sequencer.getConnectLfo2();
 		case paramLFO2depth:
 			return sequencer.getLFO2depth();
+		case paramPanic:
+			return sequencer.getPanic();
 		case paramEnabled:
 			return sequencer.getEnabled();
 	}
@@ -588,7 +600,7 @@ void PluginSequencer::setParameterValue(uint32_t index, float value)
 			sequencer.setConnectLfo2(value);
 			break;
 		case paramLFO2depth:
-			sequencer.setLFO2depth(value);
+			sequencer.setPanic(value);
 			break;
 		case paramEnabled:
 			sequencer.setEnabled(value);

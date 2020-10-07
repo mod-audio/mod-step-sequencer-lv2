@@ -20,6 +20,7 @@ public:
 	void setSyncMode(int mode);
 	void setInternalBpmValue(float internalBpm);
 	void setDivision(int division);
+	void setSwing(float swing);
 	void syncClock();
 	void setPos(uint32_t pos);
 	void setNumBarsElapsed(uint32_t numBarsElapsed);
@@ -33,6 +34,7 @@ public:
 	int getDivision() const;
 	uint32_t getPeriod() const;
 	uint32_t getPos() const;
+	float getSwing() const;
 	void tick();
 
 private:
@@ -54,6 +56,7 @@ private:
 
 	float beatsPerBar;
 	float bpm;
+	float swing;
 	float internalBpm;
 	float hostBpm;
 	float previousBpm;
@@ -70,6 +73,7 @@ private:
 	int barLength;
 	int numBarsElapsed;
 	int previousBeat;
+	int triggerIndex;
 
 	int arpMode;
 

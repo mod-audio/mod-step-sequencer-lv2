@@ -1,4 +1,5 @@
 #include "clock.hpp"
+#include <iostream>
 
 PluginClock::PluginClock() :
 	gate(false),
@@ -11,12 +12,14 @@ PluginClock::PluginClock() :
 	init(false),
 	pos(0),
 	bpm(120.0),
+	swing(0.0),
 	internalBpm(120.0),
 	previousBpm(0),
 	sampleRate(48000.0),
 	previousSyncMode(0),
 	barLength(4),
-	previousBeat(0)
+	previousBeat(0),
+	triggerIndex(0)
 {
 	//TODO everything initialized?
 }
@@ -74,6 +77,11 @@ void PluginClock::setBpm(float bpm)
 {
 	this->bpm = bpm;
 	calcPeriod();
+}
+
+void PluginClock::setSwing(float swing)
+{
+	this->swing = swing;
 }
 
 void PluginClock::setSampleRate(float sampleRate)
@@ -158,6 +166,11 @@ uint32_t PluginClock::getPos() const
 	return pos;
 }
 
+float PluginClock::getSwing() const
+{
+	return swing;
+}
+
 void PluginClock::tick()
 {
 	int beat = static_cast<int>(hostBarBeat);
@@ -210,14 +223,19 @@ void PluginClock::tick()
 	if (pos > period) {
 		pos = 0;
 	}
+	
+	uint32_t triggerPos[2];
+	triggerPos[0] = 0;
+	triggerPos[1] = static_cast<uint32_t>(halfWavelength + (halfWavelength * (swing * 0.5)));
 
-	if (pos < quarterWaveLength && !trigger) {
+	if (pos == triggerPos[triggerIndex] && !trigger) {
 		gate = true;
 		trigger = true;
-	} else if (pos > halfWavelength && trigger) {
+	} else if (pos > triggerPos[triggerIndex] && trigger) {
 		if (playing && beatSync) {
 			syncClock();
 		}
+		triggerIndex ^= 1;
 		trigger = false;
 	}
 
