@@ -63,7 +63,7 @@ void Sequencer::setOctaveSpread(int value)
 
 void Sequencer::setPlaymode(int value)
 {
-	playmode = value;
+	playMode = value;
 }
 
 void Sequencer::setSwing(float value)
@@ -168,7 +168,7 @@ int Sequencer::getOctaveSpread() const
 
 int Sequencer::getPlaymode() const
 {
-	return playmode;
+	return playMode;
 }
 
 float Sequencer::getSwing() const
@@ -347,10 +347,17 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 							numActiveNotes++;
 							overwrite = false;
 							break;
-						case STATE_RECORD_APPEND:
-							midiNotes[numActiveNotes][MIDI_NOTE] = midiNote;
-							midiNotes[numActiveNotes][MIDI_CHANNEL] = channel;
-							numActiveNotes++;
+						case STATE_PLAY:
+							switch (playMode)
+							{
+								case PLAY_MOMENTARY:
+									playing = true;
+									break;
+								case PLAY_LATCH_TRANSPOSE:
+									uint8_t firstNote =  midiNotes[overwriteIndex][MIDI_NOTE];
+									transpose = midiNote - firstNote;
+									break;
+							}
 							overwrite = false;
 							break;
 						case STATE_RECORD_OVERWRITE:
@@ -362,9 +369,34 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 							midiNotes[overwriteIndex][MIDI_CHANNEL] = channel;
 							overwriteIndex = (overwriteIndex + 1) % numActiveNotes;
 							break;
+						case STATE_RECORD_APPEND:
+							midiNotes[numActiveNotes][MIDI_NOTE] = midiNote;
+							midiNotes[numActiveNotes][MIDI_CHANNEL] = channel;
+							numActiveNotes++;
+							overwrite = false;
+							break;
 					}
 					break;
 				case MIDI_NOTEOFF:
+					switch (mode)
+					{
+						case STATE_RECORD:
+							break;
+						case STATE_PLAY:
+							switch (playMode)
+							{
+								case PLAY_MOMENTARY:
+									playing = false;
+									break;
+								case PLAY_LATCH_TRANSPOSE:
+									break;
+							}
+							break;
+						case STATE_RECORD_OVERWRITE:
+							break;
+						case STATE_RECORD_APPEND:
+							break;
+					}
 					break;
 				default:
 					midiThroughEvent.frame = events[i].frame;
@@ -374,6 +406,9 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 					}
 					midiHandler.appendMidiThroughMessage(midiThroughEvent);
 					break;
+			}
+			if (mode < 3) {
+				midiHandler.appendMidiThroughMessage(events[i]);
 			}
 		} else { //if sequencer is off
 			//send MIDI message through
@@ -396,7 +431,9 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 
 	if (mode == STATE_PLAY) {
 		recording = false;
-		playing = true;
+		if (playMode != PLAY_MOMENTARY) {
+			playing = true;
+		}
 	}
 
 	switch (mode)
@@ -431,7 +468,7 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 						uint8_t octave = octavePattern[octaveMode]->getStep() * 12;
 						octavePattern[octaveMode]->goToNextStep();
 
-						midiNote = midiNote + octave;
+						midiNote = midiNote + octave + transpose;
 
 						midiEvent.frame = s;
 						midiEvent.size = 3;

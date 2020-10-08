@@ -49,6 +49,10 @@ public:
         STATE_RECORD_APPEND,
         STATE_UNDO_LAST
 	};
+	enum playModes {
+        PLAY_MOMENTARY = 0,
+        PLAY_LATCH_TRANSPOSE
+	};
 	Sequencer();
 	~Sequencer();
 
@@ -119,6 +123,7 @@ private:
 	uint8_t pitch = 0;
 	uint8_t previousMidiNote = 0;
 	uint8_t velocity = 80;
+	int transpose = 0;
 	int previousSyncMode = 0;
 	int activeNotesIndex = 0;
 	int activeNotesBypassed = 0;
@@ -147,7 +152,7 @@ private:
 	int division = 0;
 	float noteLength = 0.8;
 	int octaveSpread = 1;
-	int playmode = 0;
+	int playMode = 0;
 	float swing = 0.5;
 	int randomizeTiming = 0;
 	int velocityMode = 0;
