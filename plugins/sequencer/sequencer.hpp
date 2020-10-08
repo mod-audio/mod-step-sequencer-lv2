@@ -152,7 +152,6 @@ private:
 	bool panic = false;
 
 	SeqUtils utils;
-	Pattern **SeqPattern;
 	Pattern **octavePattern;
 	MidiHandler midiHandler;
 	PluginClock clock;

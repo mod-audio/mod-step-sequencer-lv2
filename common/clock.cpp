@@ -100,7 +100,7 @@ void PluginClock::setDivision(int setDivision)
 
 void PluginClock::syncClock()
 {
-    pos = static_cast<uint32_t>(fmod(sampleRate * (60.0f / bpm) * (hostBarBeat + (numBarsElapsed * beatsPerBar)), sampleRate * (60.0f / (bpm * (divisionValue / 2.0f)))));
+    pos = static_cast<uint32_t>((fmod(sampleRate * (60.0f / bpm) * (hostBarBeat + (numBarsElapsed * beatsPerBar)), sampleRate * (60.0f / (bpm * (divisionValue/2.f)))) * 2.0));
 }
 
 void PluginClock::setPos(uint32_t pos)
@@ -115,7 +115,7 @@ void PluginClock::setNumBarsElapsed(uint32_t numBarsElapsed)
 
 void PluginClock::calcPeriod()
 {
-	period = static_cast<uint32_t>(sampleRate * (60.0f / (bpm * (divisionValue / 2.0f))));
+	period = static_cast<uint32_t>((sampleRate * (60.0f / (bpm * (divisionValue/2.f))))* 2.0);
 	halfWavelength = static_cast<uint32_t>(period / 2.0f);
 	quarterWaveLength = static_cast<uint32_t>(halfWavelength / 2.0f);
 	period = (period <= 0) ? 1 : period;
@@ -223,7 +223,7 @@ void PluginClock::tick()
 	if (pos > period) {
 		pos = 0;
 	}
-	
+
 	uint32_t triggerPos[2];
 	triggerPos[0] = 0;
 	triggerPos[1] = static_cast<uint32_t>(halfWavelength + (halfWavelength * (swing * 0.5)));

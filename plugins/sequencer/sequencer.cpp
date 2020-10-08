@@ -28,8 +28,6 @@ Sequencer::Sequencer()
 
 Sequencer::~Sequencer()
 {
-	delete[] SeqPattern;
-	SeqPattern = nullptr;
 	delete[] octavePattern;
 	octavePattern = nullptr;
 }
@@ -50,7 +48,7 @@ void Sequencer::setMode(int value)
 
 void Sequencer::setDivision(int value)
 {
-	division = value;
+	clock.setDivision(value);
 }
 
 void Sequencer::setNoteLength(float value)
@@ -260,9 +258,6 @@ void Sequencer::reset()
 	clock.reset();
 	clock.setNumBarsElapsed(0);
 
-	for (unsigned a = 0; a < NUM_ARP_MODES; a++) {
-		SeqPattern[SeqMode]->reset();
-	}
 	for (unsigned o = 0; o < NUM_OCTAVE_MODES; o++) {
 		octavePattern[o]->reset();
 	}
