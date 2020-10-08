@@ -16,12 +16,14 @@ Sequencer::Sequencer()
 	octavePattern[4] = new PatternCycle();
 
 	for (unsigned i = 0; i < NUM_VOICES; i++) {
-		midiNotes[i][0] = EMPTY_SLOT;
-		midiNotes[i][1] = 0;
+		midiNotes[i][MIDI_NOTE] = EMPTY_SLOT;
+		midiNotes[i][MIDI_CHANNEL] = 0;
+		midiNotes[i][NOTE_TYPE] = 0;
 	}
 	for (unsigned i = 0; i < NUM_VOICES; i++) {
 		noteOffBuffer[i][MIDI_NOTE] = EMPTY_SLOT;
 		noteOffBuffer[i][MIDI_CHANNEL] = 0;
+		noteOffBuffer[i][NOTE_TYPE] = 0;
 		noteOffBuffer[i][TIMER] = 0;
 	}
 }
@@ -38,7 +40,7 @@ void Sequencer::setSampleRate(float sampleRate)
 }
 void Sequencer::setNotemode(int value)
 {
-	notemode = value;
+	noteMode = value;
 }
 
 void Sequencer::setMode(int value)
@@ -143,7 +145,7 @@ void Sequencer::setEnabled(bool value)
 
 int Sequencer::getNotemode() const
 {
-	return notemode;
+	return noteMode;
 }
 
 int Sequencer::getMode() const
@@ -276,6 +278,7 @@ void Sequencer::reset()
 	for (unsigned i = 0; i < NUM_VOICES; i++) {
 		midiNotes[i][MIDI_NOTE] = EMPTY_SLOT;
 		midiNotes[i][MIDI_CHANNEL] = 0;
+		midiNotes[i][NOTE_TYPE] = 0;
 	}
 }
 
@@ -289,8 +292,9 @@ void Sequencer::clear()
 	numActiveNotes = 0;
 	notePlayed = 0;
 	for (unsigned i = 0; i < NUM_VOICES; i++) {
-		midiNotes[i][0] = EMPTY_SLOT;
-		midiNotes[i][1] = 0;
+		midiNotes[i][MIDI_NOTE] = EMPTY_SLOT;
+		midiNotes[i][MIDI_CHANNEL] = 0;
+		midiNotes[i][NOTE_TYPE] = 0;
 	}
 }
 
@@ -344,6 +348,8 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 							recording = true;
 							midiNotes[numActiveNotes][MIDI_NOTE] = midiNote;
 							midiNotes[numActiveNotes][MIDI_CHANNEL] = channel;
+							midiNotes[numActiveNotes][NOTE_TYPE] = noteMode;
+							std::cout << "noteMode = " << noteMode << std::endl;
 							numActiveNotes++;
 							overwrite = false;
 							break;
@@ -367,11 +373,13 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 							}
 							midiNotes[overwriteIndex][MIDI_NOTE] = midiNote;
 							midiNotes[overwriteIndex][MIDI_CHANNEL] = channel;
+							midiNotes[overwriteIndex][NOTE_TYPE] = noteMode;
 							overwriteIndex = (overwriteIndex + 1) % numActiveNotes;
 							break;
 						case STATE_RECORD_APPEND:
 							midiNotes[numActiveNotes][MIDI_NOTE] = midiNote;
 							midiNotes[numActiveNotes][MIDI_CHANNEL] = channel;
+							midiNotes[overwriteIndex][NOTE_TYPE] = noteMode;
 							numActiveNotes++;
 							overwrite = false;
 							break;
@@ -457,11 +465,13 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 			if (playing && numActiveNotes > 0 ) {
 
 				if (midiNotes[notePlayed][MIDI_NOTE] > 0
-						&& midiNotes[notePlayed][MIDI_NOTE] < 128)
+						&& midiNotes[notePlayed][MIDI_NOTE] < 128
+						&& midiNotes[notePlayed][NOTE_TYPE] > 0)
 				{
 					//create MIDI note on message
 					uint8_t midiNote = midiNotes[notePlayed][MIDI_NOTE];
 					uint8_t channel = midiNotes[notePlayed][MIDI_CHANNEL];
+					uint8_t noteType = midiNotes[notePlayed][NOTE_TYPE];
 
 					if (sequencerEnabled) {
 
@@ -480,6 +490,7 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 
 						noteOffBuffer[activeNotesIndex][MIDI_NOTE] = (uint32_t)midiNote;
 						noteOffBuffer[activeNotesIndex][MIDI_CHANNEL] = (uint32_t)channel;
+						noteOffBuffer[activeNotesIndex][NOTE_TYPE] = (uint32_t)noteType;
 						activeNotesIndex = (activeNotesIndex + 1) % NUM_NOTE_OFF_SLOTS;
 					}
 				}
@@ -491,7 +502,9 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 		for (size_t i = 0; i < NUM_NOTE_OFF_SLOTS; i++) {
 			if (noteOffBuffer[i][MIDI_NOTE] != EMPTY_SLOT) {
 				noteOffBuffer[i][TIMER] += 1;
-				if (noteOffBuffer[i][TIMER] > static_cast<uint32_t>(clock.getPeriod() * noteLength)) {
+				uint32_t duration = static_cast<uint32_t>((noteOffBuffer[i][NOTE_TYPE] != 2) ? clock.getPeriod() * noteLength : clock.getPeriod());
+				duration *= 0.5; 
+				if (noteOffBuffer[i][TIMER] > duration) {
 					midiEvent.frame = s;
 					midiEvent.size = 3;
 					midiEvent.data[0] = MIDI_NOTEOFF | noteOffBuffer[i][MIDI_CHANNEL];

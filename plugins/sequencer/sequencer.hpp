@@ -19,7 +19,8 @@
 
 #define MIDI_NOTE 0
 #define MIDI_CHANNEL 1
-#define TIMER 2
+#define NOTE_TYPE 2
+#define TIMER 3
 
 #define NUM_ARP_MODES 6
 #define NUM_OCTAVE_MODES 5
@@ -52,6 +53,11 @@ public:
 	enum playModes {
         PLAY_MOMENTARY = 0,
         PLAY_LATCH_TRANSPOSE
+	};
+	enum noteTypes {
+        REST = 0,
+        NOTE,
+        TIE,
 	};
 	Sequencer();
 	~Sequencer();
@@ -114,9 +120,9 @@ private:
 	int notePlayed = 0;
 	int octaveMode = 0;
 
-    uint8_t midiNotes[NUM_VOICES][2];
+    uint8_t midiNotes[NUM_VOICES][3];
     uint8_t midiNotesBypassed[NUM_VOICES];
-    uint32_t noteOffBuffer[NUM_NOTE_OFF_SLOTS][3];
+    uint32_t noteOffBuffer[NUM_NOTE_OFF_SLOTS][4];
 
 	int SeqMode = 0;
 
@@ -147,7 +153,7 @@ private:
 	bool overwrite = false;
 
 	int overwriteIndex = 0;
-	int notemode = 0;
+	int noteMode = 0;
 	int mode = 0;
 	int division = 0;
 	float noteLength = 0.8;
