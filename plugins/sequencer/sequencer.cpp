@@ -284,6 +284,16 @@ void Sequencer::emptyMidiBuffer()
 	midiHandler.emptyMidiBuffer();
 }
 
+void Sequencer::clear()
+{
+	numActiveNotes = 0;
+	notePlayed = 0;
+	for (unsigned i = 0; i < NUM_VOICES; i++) {
+		midiNotes[i][0] = EMPTY_SLOT;
+		midiNotes[i][1] = 0;
+	}
+}
+
 struct MidiBuffer Sequencer::getMidiBuffer()
 {
 	return midiHandler.getMidiBuffer();
@@ -309,25 +319,50 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 
 		if (sequencerEnabled) {
 
-			midiNotesCopied = false;
+			//midiNotesCopied = false;
 
-			bool voiceFound;
-			bool pitchFound;
-			size_t findFreeVoice;
-			size_t findActivePitch;
+			//bool voiceFound;
+			//bool pitchFound;
+			//size_t findFreeVoice;
+			//size_t findActivePitch;
 
 			if (midiNote == 0x7b && events[i].size == 3) {
-				activeNotes = 0;
-				for (unsigned i = 0; i < NUM_VOICES; i++) {
-					midiNotes[i][0] = EMPTY_SLOT;
-					midiNotes[i][1] = 0;
-				}
+				clear();
 			}
 
 			uint8_t channel = events[i].data[0] & 0x0F;
 
 			switch(status) {
 				case MIDI_NOTEON:
+					switch (mode)
+					{
+						case STATE_RECORD:
+							if (!recording) {
+								clear();
+							}
+							playing = false;
+							recording = true;
+							midiNotes[numActiveNotes][MIDI_NOTE] = midiNote;
+							midiNotes[numActiveNotes][MIDI_CHANNEL] = channel;
+							numActiveNotes++;
+							overwrite = false;
+							break;
+						case STATE_RECORD_APPEND:
+							midiNotes[numActiveNotes][MIDI_NOTE] = midiNote;
+							midiNotes[numActiveNotes][MIDI_CHANNEL] = channel;
+							numActiveNotes++;
+							overwrite = false;
+							break;
+						case STATE_RECORD_OVERWRITE:
+							if (!overwrite) {
+								overwriteIndex = 0;
+								overwrite = true;
+							}
+							midiNotes[overwriteIndex][MIDI_NOTE] = midiNote;
+							midiNotes[overwriteIndex][MIDI_CHANNEL] = channel;
+							overwriteIndex = (overwriteIndex + 1) % numActiveNotes;
+							break;
+					}
 					break;
 				case MIDI_NOTEOFF:
 					break;
@@ -359,12 +394,22 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 			break;
 	}
 
-	midiNotes[0][MIDI_NOTE] = 62;
-	midiNotes[1][MIDI_NOTE] = 64;
-	midiNotes[2][MIDI_NOTE] = 65;
-	midiNotes[3][MIDI_NOTE] = 67;
+	if (mode == STATE_PLAY) {
+		recording = false;
+		playing = true;
+	}
 
-	int numActiveNotes = 4;
+	switch (mode)
+	{
+		case STATE_CLEAR_ALL:
+			clear();
+			break;
+		case STATE_STOP:
+			playing = false;
+			break;
+		case STATE_UNDO_LAST:
+			break;
+	}
 
 	for (unsigned s = 0; s < n_frames; s++) {
 
@@ -372,34 +417,37 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 
 		if (clock.getGate()) {
 
-			if (midiNotes[notePlayed][MIDI_NOTE] > 0
-					&& midiNotes[notePlayed][MIDI_NOTE] < 128)
-			{
-				//create MIDI note on message
-				uint8_t midiNote = midiNotes[notePlayed][MIDI_NOTE];
-				uint8_t channel = midiNotes[notePlayed][MIDI_CHANNEL];
+			if (playing && numActiveNotes > 0 ) {
 
-				if (sequencerEnabled) {
+				if (midiNotes[notePlayed][MIDI_NOTE] > 0
+						&& midiNotes[notePlayed][MIDI_NOTE] < 128)
+				{
+					//create MIDI note on message
+					uint8_t midiNote = midiNotes[notePlayed][MIDI_NOTE];
+					uint8_t channel = midiNotes[notePlayed][MIDI_CHANNEL];
 
-					uint8_t octave = octavePattern[octaveMode]->getStep() * 12;
-					octavePattern[octaveMode]->goToNextStep();
+					if (sequencerEnabled) {
 
-					midiNote = midiNote + octave;
+						uint8_t octave = octavePattern[octaveMode]->getStep() * 12;
+						octavePattern[octaveMode]->goToNextStep();
 
-					midiEvent.frame = s;
-					midiEvent.size = 3;
-					midiEvent.data[0] = MIDI_NOTEON | channel;
-					midiEvent.data[1] = midiNote;
-					midiEvent.data[2] = velocity;
+						midiNote = midiNote + octave;
 
-					midiHandler.appendMidiMessage(midiEvent);
+						midiEvent.frame = s;
+						midiEvent.size = 3;
+						midiEvent.data[0] = MIDI_NOTEON | channel;
+						midiEvent.data[1] = midiNote;
+						midiEvent.data[2] = velocity;
 
-					noteOffBuffer[activeNotesIndex][MIDI_NOTE] = (uint32_t)midiNote;
-					noteOffBuffer[activeNotesIndex][MIDI_CHANNEL] = (uint32_t)channel;
-					activeNotesIndex = (activeNotesIndex + 1) % NUM_NOTE_OFF_SLOTS;
+						midiHandler.appendMidiMessage(midiEvent);
+
+						noteOffBuffer[activeNotesIndex][MIDI_NOTE] = (uint32_t)midiNote;
+						noteOffBuffer[activeNotesIndex][MIDI_CHANNEL] = (uint32_t)channel;
+						activeNotesIndex = (activeNotesIndex + 1) % NUM_NOTE_OFF_SLOTS;
+					}
 				}
+				notePlayed = (notePlayed + 1) % numActiveNotes;
 			}
-			notePlayed = (notePlayed + 1) % numActiveNotes;
 		}
 		clock.closeGate();
 

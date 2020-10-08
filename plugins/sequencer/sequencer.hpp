@@ -40,6 +40,15 @@ public:
 		ARP_PLAYED,
 		ARP_RANDOM
 	};
+	enum SeqStates {
+        STATE_CLEAR_ALL = 0,
+        STATE_STOP,
+        STATE_RECORD,
+        STATE_PLAY,
+        STATE_RECORD_OVERWRITE,
+        STATE_RECORD_APPEND,
+        STATE_UNDO_LAST
+	};
 	Sequencer();
 	~Sequencer();
 
@@ -90,6 +99,7 @@ public:
 	void transmitHostInfo(const bool playing, const float beatsPerBar,
 	const int beat, const float barBeat, const double bpm);
 	void reset();
+	void clear();
 	void emptyMidiBuffer();
 	struct MidiBuffer getMidiBuffer();
 	void process(const MidiEvent* event, uint32_t eventCount, uint32_t n_frames);
@@ -114,6 +124,7 @@ private:
 	int activeNotesBypassed = 0;
 	int timeOutTime = 5000;
 	int firstNoteTimer = 0;
+	int numActiveNotes = 0;
 	float barBeat;
 	float sampleRate = 48000;
 
@@ -128,7 +139,9 @@ private:
 	bool quantizedStart = false;
 	bool resetPattern = false;
 	bool midiNotesCopied = false;
+	bool overwrite = false;
 
+	int overwriteIndex = 0;
 	int notemode = 0;
 	int mode = 0;
 	int division = 0;
@@ -150,6 +163,9 @@ private:
 	int lFO2depth = 0;
 	bool sequencerEnabled = true;
 	bool panic = false;
+	
+	bool recording = false;
+	bool playing = false;
 
 	SeqUtils utils;
 	Pattern **octavePattern;
