@@ -1,4 +1,4 @@
-#include "oscillator.hpp"
+#include "velocityLFO.hpp"
 
 VelocityLFO::VelocityLFO(double samplerate, double frequency, double phase) :
 frequency(frequency),

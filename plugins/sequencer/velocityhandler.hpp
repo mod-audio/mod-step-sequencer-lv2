@@ -1,7 +1,7 @@
 #ifndef _H_VELOCITY_HANDLER_
 #define _H_VELOCITY_HANDLER_
 
-#include "oscillator.hpp"
+#include "velocityLFO.hpp"
 
 #define NUM_STEPS 8
 

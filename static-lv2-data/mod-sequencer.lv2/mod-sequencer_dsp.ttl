@@ -1,0 +1,632 @@
+@prefix atom: <http://lv2plug.in/ns/ext/atom#> .
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
+@prefix mod:  <http://moddevices.com/ns/mod#> .
+@prefix opts: <http://lv2plug.in/ns/ext/options#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rsz:  <http://lv2plug.in/ns/ext/resize-port#> .
+@prefix unit: <http://lv2plug.in/ns/extensions/units#> .
+
+<http://moddevices.com/plugins/mod-devel/sequencer>
+    a lv2:MIDIPlugin, lv2:Plugin ;
+
+    lv2:extensionData opts:interface ;
+
+    lv2:optionalFeature <http://lv2plug.in/ns/lv2core#hardRTCapable> ,
+                        <http://lv2plug.in/ns/ext/buf-size#boundedBlockLength> ; lv2:requiredFeature opts:options ,
+                        <http://lv2plug.in/ns/ext/urid#map> ;
+
+    opts:supportedOption <http://lv2plug.in/ns/ext/buf-size#nominalBlockLength> ,
+                         <http://lv2plug.in/ns/ext/buf-size#maxBlockLength> ,
+                         <http://lv2plug.in/ns/ext/parameters#sampleRate> ;
+
+    lv2:port [
+        a lv2:InputPort, atom:AtomPort ;
+        lv2:index 0 ;
+        lv2:name "Events Input" ;
+        lv2:symbol "lv2_events_in" ;
+        rsz:minimumSize 2048 ;
+        atom:bufferType atom:Sequence ;
+        atom:supports <http://lv2plug.in/ns/ext/midi#MidiEvent> ;
+        atom:supports <http://lv2plug.in/ns/ext/time#Position> ;
+    ] ;
+
+    lv2:port [
+        a lv2:OutputPort, atom:AtomPort ;
+        lv2:index 1 ;
+        lv2:name "Events Output" ;
+        lv2:symbol "lv2_events_out" ;
+        rsz:minimumSize 2048 ;
+        atom:bufferType atom:Sequence ;
+        atom:supports <http://lv2plug.in/ns/ext/midi#MidiEvent> ;
+    ] ;
+
+    lv2:port [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 2 ;
+        lv2:name """Notemode""" ;
+        lv2:symbol "notemode" ;
+        lv2:default 1 ;
+        lv2:minimum 0 ;
+        lv2:maximum 2 ;
+        lv2:portProperty lv2:enumeration ;
+        lv2:scalePoint [
+            rdfs:label  """Rest""" ;
+            rdf:value 0 ;
+        ] ,
+        [
+            rdfs:label  """Note""" ;
+            rdf:value 1 ;
+        ] ,
+        [
+            rdfs:label  """Tie""" ;
+            rdf:value 2 ;
+        ] ;
+
+        lv2:portProperty lv2:integer ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 3 ;
+        lv2:name """Mode""" ;
+        lv2:symbol "mode" ;
+        lv2:default 1 ;
+        lv2:minimum 0 ;
+        lv2:maximum 6 ;
+        lv2:portProperty lv2:enumeration ;
+        lv2:scalePoint [
+            rdfs:label  """Clear All""" ;
+            rdf:value 0 ;
+        ] ,
+        [
+            rdfs:label  """Stop""" ;
+            rdf:value 1 ;
+        ] ,
+        [
+            rdfs:label  """Record""" ;
+            rdf:value 2 ;
+        ] ,
+        [
+            rdfs:label  """Play""" ;
+            rdf:value 3 ;
+        ] ,
+        [
+            rdfs:label  """Record Overwrite""" ;
+            rdf:value 4 ;
+        ] ,
+        [
+            rdfs:label  """Record Append""" ;
+            rdf:value 5 ;
+        ] ,
+        [
+            rdfs:label  """Undo Last""" ;
+            rdf:value 6 ;
+        ] ;
+
+        lv2:portProperty lv2:integer ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 4 ;
+        lv2:name """Divison""" ;
+        lv2:symbol "Divisons" ;
+        lv2:default 9 ;
+        lv2:minimum 0 ;
+        lv2:maximum 12 ;
+        lv2:portProperty lv2:enumeration ;
+        lv2:scalePoint [
+            rdfs:label  """1/1""" ;
+            rdf:value 0 ;
+        ] ,
+        [
+            rdfs:label  """1/2""" ;
+            rdf:value 1 ;
+        ] ,
+        [
+            rdfs:label  """1/3""" ;
+            rdf:value 2 ;
+        ] ,
+        [
+            rdfs:label  """1/4""" ;
+            rdf:value 3 ;
+        ] ,
+        [
+            rdfs:label  """1/4.""" ;
+            rdf:value 4 ;
+        ] ,
+        [
+            rdfs:label  """1/4T""" ;
+            rdf:value 5 ;
+        ] ,
+        [
+            rdfs:label  """1/8""" ;
+            rdf:value 6 ;
+        ] ,
+        [
+            rdfs:label  """1/8.""" ;
+            rdf:value 7 ;
+        ] ,
+        [
+            rdfs:label  """1/8T""" ;
+            rdf:value 8 ;
+        ] ,
+        [
+            rdfs:label  """1/16""" ;
+            rdf:value 9 ;
+        ] ,
+        [
+            rdfs:label  """1/16.""" ;
+            rdf:value 10 ;
+        ] ,
+        [
+            rdfs:label  """1/16T""" ;
+            rdf:value 11 ;
+        ] ,
+        [
+            rdfs:label  """1/32""" ;
+            rdf:value 12 ;
+        ] ;
+
+        lv2:portProperty lv2:integer ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 5 ;
+        lv2:name """Note Length""" ;
+        lv2:symbol "noteLength" ;
+        lv2:default 0.800000 ;
+        lv2:minimum 0.000000 ;
+        lv2:maximum 1.000000 ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 6 ;
+        lv2:name """Octave Spread""" ;
+        lv2:symbol "octaveSpread" ;
+        lv2:default 0 ;
+        lv2:minimum 0 ;
+        lv2:maximum 3 ;
+        lv2:portProperty lv2:enumeration ;
+        lv2:scalePoint [
+            rdfs:label  """1 oct""" ;
+            rdf:value 0 ;
+        ] ,
+        [
+            rdfs:label  """2 oct""" ;
+            rdf:value 1 ;
+        ] ,
+        [
+            rdfs:label  """3 oct""" ;
+            rdf:value 2 ;
+        ] ,
+        [
+            rdfs:label  """4 oct""" ;
+            rdf:value 3 ;
+        ] ;
+
+        lv2:portProperty lv2:integer ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 7 ;
+        lv2:name """Play Mode""" ;
+        lv2:symbol "playMode" ;
+        lv2:default 1 ;
+        lv2:minimum 0 ;
+        lv2:maximum 2 ;
+        lv2:portProperty lv2:enumeration ;
+        lv2:scalePoint [
+            rdfs:label  """Momentary""" ;
+            rdf:value 0 ;
+        ] ,
+        [
+            rdfs:label  """Latch-Transpose""" ;
+            rdf:value 1 ;
+        ] ,
+        [
+            rdfs:label  """Latch-PlayNotes""" ;
+            rdf:value 2 ;
+        ] ;
+
+        lv2:portProperty lv2:integer ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 8 ;
+        lv2:name """Swing""" ;
+        lv2:symbol "swing" ;
+        lv2:default 0.000000 ;
+        lv2:minimum -1.000000 ;
+        lv2:maximum 1.000000 ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 9 ;
+        lv2:name """Randomize Timing""" ;
+        lv2:symbol "randomizeTiming" ;
+        lv2:default 0.000000 ;
+        lv2:minimum 0.000000 ;
+        lv2:maximum 1.000000 ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 10 ;
+        lv2:name """Velocity Mode""" ;
+        lv2:symbol "velocityMode" ;
+        lv2:default 0 ;
+        lv2:minimum 0 ;
+        lv2:maximum 2 ;
+        lv2:portProperty lv2:enumeration ;
+        lv2:scalePoint [
+            rdfs:label  """None""" ;
+            rdf:value 0 ;
+        ] ,
+        [
+            rdfs:label  """Velocity Curve""" ;
+            rdf:value 1 ;
+        ] ,
+        [
+            rdfs:label  """Velocity Pattern""" ;
+            rdf:value 2 ;
+        ] ;
+
+        lv2:portProperty lv2:integer ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 11 ;
+        lv2:name """Velocity Curve""" ;
+        lv2:symbol "velocityCurve" ;
+        lv2:default 0 ;
+        lv2:minimum 0 ;
+        lv2:maximum 70 ;
+        lv2:portProperty lv2:integer ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 12 ;
+        lv2:name """Curve Depth""" ;
+        lv2:symbol "curveDepth" ;
+        lv2:default 0.000000 ;
+        lv2:minimum 0.000000 ;
+        lv2:maximum 1.000000 ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 13 ;
+        lv2:name """Curve Clip""" ;
+        lv2:symbol "curveClip" ;
+        lv2:default 0.000000 ;
+        lv2:minimum 0.000000 ;
+        lv2:maximum 1.000000 ;
+        lv2:portProperty lv2:toggled ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 14 ;
+        lv2:name """Curve Length""" ;
+        lv2:symbol "curveLength" ;
+        lv2:default 1 ;
+        lv2:minimum 1 ;
+        lv2:maximum 16 ;
+        lv2:portProperty lv2:integer ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 15 ;
+        lv2:name """Pattern length""" ;
+        lv2:symbol "patternLength" ;
+        lv2:default 1 ;
+        lv2:minimum 1 ;
+        lv2:maximum 8 ;
+        lv2:portProperty lv2:integer ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 16 ;
+        lv2:name """Velocity note 1""" ;
+        lv2:symbol "velocityNote1" ;
+        lv2:default 100 ;
+        lv2:minimum 0 ;
+        lv2:maximum 127 ;
+        lv2:portProperty lv2:integer ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 17 ;
+        lv2:name """Velocity note 2""" ;
+        lv2:symbol "velocityNote2" ;
+        lv2:default 100 ;
+        lv2:minimum 0 ;
+        lv2:maximum 127 ;
+        lv2:portProperty lv2:integer ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 18 ;
+        lv2:name """Velocity note 3""" ;
+        lv2:symbol "velocityNote3" ;
+        lv2:default 100 ;
+        lv2:minimum 0 ;
+        lv2:maximum 127 ;
+        lv2:portProperty lv2:integer ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 19 ;
+        lv2:name """Velocity note 4""" ;
+        lv2:symbol "velocityNote4" ;
+        lv2:default 100 ;
+        lv2:minimum 0 ;
+        lv2:maximum 127 ;
+        lv2:portProperty lv2:integer ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 20 ;
+        lv2:name """Velocity note 5""" ;
+        lv2:symbol "velocityNote5" ;
+        lv2:default 100 ;
+        lv2:minimum 0 ;
+        lv2:maximum 127 ;
+        lv2:portProperty lv2:integer ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 21 ;
+        lv2:name """Velocity note 6""" ;
+        lv2:symbol "velocityNote6" ;
+        lv2:default 100 ;
+        lv2:minimum 0 ;
+        lv2:maximum 127 ;
+        lv2:portProperty lv2:integer ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 22 ;
+        lv2:name """Velocity note 7""" ;
+        lv2:symbol "velocityNote7" ;
+        lv2:default 100 ;
+        lv2:minimum 0 ;
+        lv2:maximum 127 ;
+        lv2:portProperty lv2:integer ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 23 ;
+        lv2:name """Velocity note 8""" ;
+        lv2:symbol "velocityNote8" ;
+        lv2:default 100 ;
+        lv2:minimum 0 ;
+        lv2:maximum 127 ;
+        lv2:portProperty lv2:integer ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 24 ;
+        lv2:name """LFO 1 Destination""" ;
+        lv2:symbol "lfo1Destination" ;
+        lv2:default 0 ;
+        lv2:minimum 0 ;
+        lv2:maximum 17 ;
+        lv2:portProperty lv2:enumeration ;
+        lv2:scalePoint [
+            rdfs:label  """none""" ;
+            rdf:value 0 ;
+        ] ,
+        [
+            rdfs:label  """division""" ;
+            rdf:value 1 ;
+        ] ,
+        [
+            rdfs:label  """noteLengthParam""" ;
+            rdf:value 2 ;
+        ] ,
+        [
+            rdfs:label  """octaveSpread""" ;
+            rdf:value 3 ;
+        ] ,
+        [
+            rdfs:label  """swing""" ;
+            rdf:value 4 ;
+        ] ,
+        [
+            rdfs:label  """randomizeTimming""" ;
+            rdf:value 5 ;
+        ] ,
+        [
+            rdfs:label  """velocityMode""" ;
+            rdf:value 6 ;
+        ] ,
+        [
+            rdfs:label  """velocityCurve""" ;
+            rdf:value 7 ;
+        ] ,
+        [
+            rdfs:label  """curveDepth""" ;
+            rdf:value 8 ;
+        ] ,
+        [
+            rdfs:label  """curveClip""" ;
+            rdf:value 9 ;
+        ] ,
+        [
+            rdfs:label  """patternVel1""" ;
+            rdf:value 10 ;
+        ] ,
+        [
+            rdfs:label  """patternVel2""" ;
+            rdf:value 11 ;
+        ] ,
+        [
+            rdfs:label  """patternVel3""" ;
+            rdf:value 12 ;
+        ] ,
+        [
+            rdfs:label  """patternVel4""" ;
+            rdf:value 13 ;
+        ] ,
+        [
+            rdfs:label  """patternVel5""" ;
+            rdf:value 14 ;
+        ] ,
+        [
+            rdfs:label  """patternVel6""" ;
+            rdf:value 15 ;
+        ] ,
+        [
+            rdfs:label  """patternVel7""" ;
+            rdf:value 16 ;
+        ] ,
+        [
+            rdfs:label  """patternVel8""" ;
+            rdf:value 17 ;
+        ] ;
+
+        lv2:portProperty lv2:integer ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 25 ;
+        lv2:name """LFO 1 Depth""" ;
+        lv2:symbol "lfo1Depth" ;
+        lv2:default 0.000000 ;
+        lv2:minimum 0.000000 ;
+        lv2:maximum 100.000000 ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 26 ;
+        lv2:name """LFO 2 Destination""" ;
+        lv2:symbol "lfo2Destination" ;
+        lv2:default 0 ;
+        lv2:minimum 0 ;
+        lv2:maximum 17 ;
+        lv2:portProperty lv2:enumeration ;
+        lv2:scalePoint [
+            rdfs:label  """none""" ;
+            rdf:value 0 ;
+        ] ,
+        [
+            rdfs:label  """division""" ;
+            rdf:value 1 ;
+        ] ,
+        [
+            rdfs:label  """noteLengthParam""" ;
+            rdf:value 2 ;
+        ] ,
+        [
+            rdfs:label  """octaveSpread""" ;
+            rdf:value 3 ;
+        ] ,
+        [
+            rdfs:label  """swing""" ;
+            rdf:value 4 ;
+        ] ,
+        [
+            rdfs:label  """randomizeTimming""" ;
+            rdf:value 5 ;
+        ] ,
+        [
+            rdfs:label  """velocityMode""" ;
+            rdf:value 6 ;
+        ] ,
+        [
+            rdfs:label  """velocityCurve""" ;
+            rdf:value 7 ;
+        ] ,
+        [
+            rdfs:label  """curveDepth""" ;
+            rdf:value 8 ;
+        ] ,
+        [
+            rdfs:label  """curveClip""" ;
+            rdf:value 9 ;
+        ] ,
+        [
+            rdfs:label  """patternVel1""" ;
+            rdf:value 10 ;
+        ] ,
+        [
+            rdfs:label  """patternVel2""" ;
+            rdf:value 11 ;
+        ] ,
+        [
+            rdfs:label  """patternVel3""" ;
+            rdf:value 12 ;
+        ] ,
+        [
+            rdfs:label  """patternVel4""" ;
+            rdf:value 13 ;
+        ] ,
+        [
+            rdfs:label  """patternVel5""" ;
+            rdf:value 14 ;
+        ] ,
+        [
+            rdfs:label  """patternVel6""" ;
+            rdf:value 15 ;
+        ] ,
+        [
+            rdfs:label  """patternVel7""" ;
+            rdf:value 16 ;
+        ] ,
+        [
+            rdfs:label  """patternVel8""" ;
+            rdf:value 17 ;
+        ] ;
+
+        lv2:portProperty lv2:integer ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 27 ;
+        lv2:name """LFO 2 Depth""" ;
+        lv2:symbol "lfo2Depth" ;
+        lv2:default 0.000000 ;
+        lv2:minimum 0.000000 ;
+        lv2:maximum 100.000000 ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 28 ;
+        lv2:name """Panic""" ;
+        lv2:symbol "panic" ;
+        lv2:default 0.000000 ;
+        lv2:minimum 0.000000 ;
+        lv2:maximum 1.000000 ;
+        lv2:portProperty <http://lv2plug.in/ns/ext/port-props#trigger> ;
+        lv2:portProperty lv2:toggled ;
+        lv2:portProperty <http://lv2plug.in/ns/ext/port-props#expensive> ,
+                         <http://kxstudio.sf.net/ns/lv2ext/props#NonAutomable> ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 29 ;
+        lv2:name """Enabled""" ;
+        lv2:symbol "enabled" ;
+        lv2:default 1.000000 ;
+        lv2:minimum 0.000000 ;
+        lv2:maximum 1.000000 ;
+        lv2:portProperty lv2:toggled ;
+        lv2:portProperty <http://lv2plug.in/ns/ext/port-props#expensive> ,
+                         <http://kxstudio.sf.net/ns/lv2ext/props#NonAutomable> ;
+    ] ;
+
+    rdfs:comment """A MIDI sequencer""" ;
+
+    mod:brand "MOD" ;
+    mod:label "Sequencer" ;
+
+    doap:name """Sequencer""" ;
+    doap:license <https://spdx.org/licenses/GPL-2.0-or-later> ;
+
+    doap:maintainer [
+        foaf:name """MOD""" ;
+    ] ;
+
+    lv2:microVersion 0 ;
+    lv2:minorVersion 2 .
+

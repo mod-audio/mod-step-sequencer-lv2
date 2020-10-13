@@ -63,6 +63,7 @@ void VelocityHandler::goToNextStep()
 uint8_t VelocityHandler::getVelocity()
 {
 	std::cout << "velocity in pattern = " << (int)velocity << std::endl;
+	std::cout << "sample = " << lfo->getSample() << std::endl;
 	return velocity;
 }
 

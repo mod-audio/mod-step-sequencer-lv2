@@ -28,7 +28,7 @@ BUILD_LV2 ?= true
 FILES_DSP = \
 	plugin.cpp \
 	sequencer.cpp \
-	oscillator.cpp \
+	velocityLFO.cpp \
 	lfoHandler.cpp \
 	velocityhandler.cpp \
 	utils.cpp \

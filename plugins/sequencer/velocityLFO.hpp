@@ -9,7 +9,7 @@ class VelocityLFO
 {
 public:
     VelocityLFO(double samplerate, double frequency, double phase);
-    virtual ~VelocityLFO();
+    ~VelocityLFO();
     double getSample();
 
 	void   setVelocityCurve(float value);
