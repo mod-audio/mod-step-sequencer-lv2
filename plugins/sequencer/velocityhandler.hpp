@@ -16,10 +16,14 @@ public:
 	VelocityHandler(float sampleRate);
 	~VelocityHandler();
 
-	void setVelocityCurve(float value);
-	void setCurveDepth(float value);
-	void setCurveClip(bool value);
-	void setCurveLength(int value);
+	void  setVelocityCurve(float value);
+	void  setCurveDepth(float value);
+	void  setCurveClip(bool value);
+	void  setCurveLength(int value);
+	float getVelocityCurve();
+	float getCurveDepth();
+	bool  getCurveClip();
+	int   getCurveLength();
 
 	void setSampleRate(float sampleRate);
 	void setMode(int mode);

@@ -92,7 +92,7 @@ void Sequencer::setVelocityCurve(float value)
 	velocityHandler->setVelocityCurve(value);
 }
 
-void Sequencer::setCurvedepth(float value)
+void Sequencer::setCurveDepth(float value)
 {
 	velocityHandler->setCurveDepth(value);
 }
@@ -197,9 +197,9 @@ float Sequencer::getVelocityCurve() const
 	return velocityCurve;
 }
 
-float Sequencer::getCurvedepth() const
+float Sequencer::getCurveDepth() const
 {
-	return curvedepth;
+	return velocityHandler->getCurveDepth();
 }
 
 bool Sequencer::getCurveClip() const

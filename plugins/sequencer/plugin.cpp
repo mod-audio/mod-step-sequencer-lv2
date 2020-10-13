@@ -213,6 +213,15 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			parameter.ranges.min = 0.f;
 			parameter.ranges.max = 70.f;
 			break;
+		case paramCurveDepth:
+			parameter.hints      = kParameterIsAutomable;
+			parameter.name       = "Curve Depth";
+			parameter.symbol     = "curveDepth";
+			parameter.unit       = "";
+			parameter.ranges.def = 0.f;
+			parameter.ranges.min = 0.f;
+			parameter.ranges.max = 1.f;
+			break;
 		case paramCurveClip:
 			parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
 			parameter.name       = "Curve Clip";
@@ -491,6 +500,8 @@ float PluginSequencer::getParameterValue(uint32_t index) const
 			return sequencer->getVelocityMode();
 		case paramVelocityCurve:
 			return sequencer->getVelocityCurve();
+		case paramCurveDepth:
+			return sequencer->getCurveDepth();
 		case paramCurveClip:
 			return sequencer->getCurveClip();
 		case paramCurveLength:
@@ -564,6 +575,9 @@ void PluginSequencer::setParameterValue(uint32_t index, float value)
 			break;
 		case paramVelocityCurve:
 			sequencer->setVelocityCurve(value);
+			break;
+		case paramCurveDepth:
+			sequencer->setCurveDepth(value);
 			break;
 		case paramCurveClip:
 			sequencer->setCurveClip(value);

@@ -23,7 +23,7 @@ public:
 		paramRandomizeTiming,
 		paramVelocityMode,
 		paramVelocityCurve,
-		paramCurvedepth,
+		paramCurveDepth,
 		paramCurveClip,
 		paramCurveLength,
 		paramPatternlength,

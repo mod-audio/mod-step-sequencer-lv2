@@ -16,6 +16,10 @@ public:
 	void   setCurveDepth(float value);
 	void   setCurveClip(bool value);
 	void   setCurveLength(int value);
+	float  getVelocityCurve();
+	float  getCurveDepth();
+	bool   getCurveClip();
+	int    getCurveLength();
     void   tick();
     void   setFrequency(double frequency);
     void   setPhase(double phase);

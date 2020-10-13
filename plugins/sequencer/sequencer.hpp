@@ -74,7 +74,7 @@ public:
 	void setRandomizeTiming(float value);
 	void setVelocityMode(int value);
 	void setVelocityCurve(float value);
-	void setCurvedepth(float value);
+	void setCurveDepth(float value);
 	void setCurveClip(bool value);
 	void setCurveLength(int value);
 	void setPatternlength(int value);
@@ -95,7 +95,7 @@ public:
 	float getRandomizeTiming() const;
 	int getVelocityMode() const;
 	float getVelocityCurve() const;
-	float getCurvedepth() const;
+	float getCurveDepth() const;
 	bool getCurveClip() const;
 	int getCurveLength() const;
 	int getPatternlength() const;
@@ -164,7 +164,7 @@ private:
 	int randomizeTiming = 0;
 	int velocityMode = 0;
 	int velocityCurve = 0;
-	float curvedepth = 0.0;
+	float curveDepth = 0.0;
 	int curveClip = 0;
 	int curveLength = 1;
 	int patternlength = 1;

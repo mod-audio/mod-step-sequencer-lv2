@@ -18,16 +18,6 @@ VelocityLFO::~VelocityLFO()
 {
 }
 
-double VelocityLFO::getSample()
-{
-    return sample;
-}
-
-void VelocityLFO::tick()
-{
-    calculate();
-}
-
 void VelocityLFO::setVelocityCurve(float velocityCurve)
 {
 	this->velocityCurve = velocityCurve;
@@ -57,9 +47,39 @@ void VelocityLFO::setFrequency(double frequency)
     this->frequency = frequency;
 }
 
+double VelocityLFO::getSample()
+{
+    return sample;
+}
+
+float VelocityLFO::getVelocityCurve()
+{
+	return velocityCurve;
+}
+
+float VelocityLFO::getCurveDepth()
+{
+	return curveDepth;
+}
+
+bool VelocityLFO::getCurveClip()
+{
+	return curveClip;
+}
+
+int VelocityLFO::getCurveLength()
+{
+	return curveLength;
+}
+
 double VelocityLFO::getFrequency()
 {
 	return frequency;
+}
+
+void VelocityLFO::tick()
+{
+    sample = calculate() * curveDepth;
 }
 
 int VelocityLFO::calculate()

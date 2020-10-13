@@ -66,6 +66,26 @@ uint8_t VelocityHandler::getVelocity()
 	return velocity;
 }
 
+float VelocityHandler::getVelocityCurve()
+{
+	return lfo->getVelocityCurve();
+}
+
+float VelocityHandler::getCurveDepth()
+{
+	return lfo->getCurveDepth();
+}
+
+bool VelocityHandler::getCurveClip()
+{
+	return lfo->getCurveClip();
+}
+
+int VelocityHandler::getCurveLength()
+{
+	return lfo->getCurveLength();
+}
+
 void VelocityHandler::process()
 {
 	switch (velocityMode)
@@ -74,7 +94,7 @@ void VelocityHandler::process()
 			velocity = 100;
 			break;
 		case LFO:
-			velocity = lfo->getSample();
+			velocity = static_cast<uint8_t>(lfo->getSample());
 			break;
 		case PATTERN:
 			velocity = velocityPattern[step];
