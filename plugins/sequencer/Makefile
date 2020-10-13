@@ -30,6 +30,7 @@ FILES_DSP = \
 	sequencer.cpp \
 	oscillator.cpp \
 	lfoHandler.cpp \
+	velocityhandler.cpp \
 	utils.cpp \
 	../../common/midiHandler.cpp \
 	../../common/clock.cpp \

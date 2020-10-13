@@ -45,6 +45,7 @@ public:
 	};
 
     PluginSequencer();
+    ~PluginSequencer();
 
 protected:
     // -------------------------------------------------------------------
@@ -107,7 +108,8 @@ protected:
     // -------------------------------------------------------------------
 
 private:
-	Sequencer sequencer;
+	Sequencer *sequencer;
+
 	float fParams[paramCount];
 	int active_notes[20];
 	int next_note = 0;

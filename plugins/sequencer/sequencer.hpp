@@ -7,6 +7,7 @@
 #include "../../common/pattern.hpp"
 #include "../../common/midiHandler.hpp"
 #include "utils.hpp"
+#include "velocityhandler.hpp"
 
 
 #define NUM_VOICES 200
@@ -59,7 +60,7 @@ public:
         NOTE,
         TIE,
 	};
-	Sequencer();
+	Sequencer(double sampleRate);
 	~Sequencer();
 
 	void setSampleRate(float sampleRate);
@@ -174,7 +175,7 @@ private:
 	int lFO2depth = 0;
 	bool sequencerEnabled = true;
 	bool panic = false;
-	
+
 	bool recording = false;
 	bool playing = false;
 
@@ -182,6 +183,7 @@ private:
 	Pattern **octavePattern;
 	MidiHandler midiHandler;
 	PluginClock clock;
+	VelocityHandler *velocityHandler;
 };
 
 #endif // _H_SEQUENCER_

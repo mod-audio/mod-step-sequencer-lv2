@@ -11,11 +11,16 @@ public:
     VelocityLFO(double samplerate, double frequency, double phase);
     virtual ~VelocityLFO();
     double getSample();
-    void tick();
-    void setFrequency(double frequency);
-    void setPhase(double phase);
+
+	void   setVelocityCurve(float value);
+	void   setCurveDepth(float value);
+	void   setCurveClip(bool value);
+	void   setCurveLength(int value);
+    void   tick();
+    void   setFrequency(double frequency);
+    void   setPhase(double phase);
     double getFrequency();
-	int calculate();
+	int    calculate();
 private:
     double frequency;
     double phase;
@@ -23,16 +28,11 @@ private:
     double samplerate;
 	double x1;
 	double velocityCurve;
-
+	double curveDepth; //TODO check type
 	int    curveLength;
 	int    frame;
-
-	bool curveClip;
-	bool clip;
-
-    
-    
-    
+	bool   curveClip;
+	bool   clip;
 };
 
 #endif

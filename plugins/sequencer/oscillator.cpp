@@ -12,7 +12,6 @@ frame(0),
 curveClip(false),
 clip(false)
 {
-
 }
 
 VelocityLFO::~VelocityLFO()
@@ -29,11 +28,29 @@ void VelocityLFO::tick()
     calculate();
 }
 
+void VelocityLFO::setVelocityCurve(float velocityCurve)
+{
+	this->velocityCurve = velocityCurve;
+}
+
+void VelocityLFO::setCurveDepth(float curveDepth)
+{
+	this->curveDepth = curveDepth;
+}
+
+void VelocityLFO::setCurveClip(bool curveClip)
+{
+	this->curveClip = curveClip;
+}
+
+void VelocityLFO::setCurveLength(int curveLength)
+{
+	this->curveLength = curveLength;
+}
 void VelocityLFO::setPhase(double phase)
 {
     this->phase = phase;
 }
-
 
 void VelocityLFO::setFrequency(double frequency)
 {

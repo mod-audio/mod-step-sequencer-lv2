@@ -1,10 +1,10 @@
 #include "sequencer.hpp"
 #include <iostream>
 
-Sequencer::Sequencer()
+Sequencer::Sequencer(double sampleRate) : velocityHandler(new VelocityHandler(static_cast<float>(sampleRate)))
 {
 	clock.transmitHostInfo(0, 4, 1, 1, 120.0);
-	clock.setSampleRate(static_cast<float>(48000.0));
+	clock.setSampleRate(static_cast<float>(sampleRate));
 	clock.setDivision(7);
 
 	octavePattern = new Pattern*[5];
@@ -30,6 +30,8 @@ Sequencer::Sequencer()
 
 Sequencer::~Sequencer()
 {
+	delete velocityHandler;
+	velocityHandler = nullptr;
 	delete[] octavePattern;
 	octavePattern = nullptr;
 }
@@ -37,7 +39,9 @@ Sequencer::~Sequencer()
 void Sequencer::setSampleRate(float sampleRate)
 {
 	this->sampleRate = sampleRate;
+	clock.setSampleRate(sampleRate);
 }
+
 void Sequencer::setNotemode(int value)
 {
 	noteMode = value;
@@ -80,37 +84,37 @@ void Sequencer::setRandomizeTiming(float value)
 
 void Sequencer::setVelocityMode(int value)
 {
-	velocityMode = value;
+	velocityHandler->setMode(value);
 }
 
 void Sequencer::setVelocityCurve(float value)
 {
-	velocityCurve = value;
+	velocityHandler->setVelocityCurve(value);
 }
 
 void Sequencer::setCurvedepth(float value)
 {
-	curvedepth = value;
+	velocityHandler->setCurveDepth(value);
 }
 
 void Sequencer::setCurveClip(bool value)
 {
-	curveClip = value;
+	velocityHandler->setCurveClip(value);
 }
 
 void Sequencer::setCurveLength(int value)
 {
-	curveLength = value;
+	velocityHandler->setCurveLength(value);
 }
 
 void Sequencer::setPatternlength(int value)
 {
-	patternlength = value;
+	velocityHandler->setNumSteps(value);
 }
 
 void Sequencer::setVelocityNote(int index, int value)
 {
-	velocityNote[index] = value;
+	velocityHandler->setVelocityPattern(index, (uint8_t)value);
 }
 
 void Sequencer::setConnectLfo1(int value)
@@ -349,7 +353,6 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 							midiNotes[numActiveNotes][MIDI_NOTE] = midiNote;
 							midiNotes[numActiveNotes][MIDI_CHANNEL] = channel;
 							midiNotes[numActiveNotes][NOTE_TYPE] = noteMode;
-							std::cout << "noteMode = " << noteMode << std::endl;
 							numActiveNotes++;
 							overwrite = false;
 							break;
@@ -459,6 +462,7 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 	for (unsigned s = 0; s < n_frames; s++) {
 
 		clock.tick();
+		velocityHandler->process();
 
 		if (clock.getGate()) {
 
@@ -484,7 +488,7 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 						midiEvent.size = 3;
 						midiEvent.data[0] = MIDI_NOTEON | channel;
 						midiEvent.data[1] = midiNote;
-						midiEvent.data[2] = velocity;
+						midiEvent.data[2] = velocityHandler->getVelocity();
 
 						midiHandler.appendMidiMessage(midiEvent);
 
@@ -495,6 +499,7 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 					}
 				}
 				notePlayed = (notePlayed + 1) % numActiveNotes;
+				velocityHandler->goToNextStep();
 			}
 		}
 		clock.closeGate();

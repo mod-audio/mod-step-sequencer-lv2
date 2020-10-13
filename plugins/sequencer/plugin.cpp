@@ -6,11 +6,17 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 PluginSequencer::PluginSequencer()
-    : Plugin(paramCount, 0, 0)  // paramCount params, 12 program(s), 0 states
+    : Plugin(paramCount, 0, 0), sequencer(new Sequencer(getSampleRate()))
 {
-	sequencer.transmitHostInfo(0, 4, 1, 1, 120.0);
-	sequencer.setSampleRate(static_cast<float>(getSampleRate()));
-	sequencer.setDivision(7);
+	sequencer->transmitHostInfo(0, 4, 1, 1, 120.0);
+	sequencer->setSampleRate(static_cast<float>(getSampleRate()));
+	sequencer->setDivision(7);
+}
+
+PluginSequencer::~PluginSequencer()
+{
+	delete sequencer;
+	sequencer = nullptr;
 }
 
 // -----------------------------------------------------------------------
@@ -25,7 +31,7 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			parameter.hints = kParameterIsAutomable | kParameterIsInteger;
 			parameter.name = "Notemode";
 			parameter.symbol = "notemode";
-			parameter.ranges.def = 0;
+			parameter.ranges.def = 1;
 			parameter.ranges.min = 0;
 			parameter.ranges.max = 2;
 			parameter.enumValues.count = 3;
@@ -114,7 +120,7 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			parameter.name       = "Note Length";
 			parameter.symbol     = "noteLength";
 			parameter.unit       = "";
-			parameter.ranges.def = 0.f;
+			parameter.ranges.def = 0.8f;
 			parameter.ranges.min = 0.f;
 			parameter.ranges.max = 1.f;
 			break;
@@ -144,7 +150,7 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			parameter.hints = kParameterIsAutomable | kParameterIsInteger;
 			parameter.name = "Play Mode";
 			parameter.symbol = "playMode";
-			parameter.ranges.def = 0;
+			parameter.ranges.def = 1;
 			parameter.ranges.min = 0;
 			parameter.ranges.max = 2;
 			parameter.enumValues.count = 3;
@@ -199,16 +205,16 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			}
 			break;
 		case paramVelocityCurve:
-			parameter.hints      = kParameterIsInteger;
+			parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
 			parameter.name       = "Velocity Curve";
 			parameter.symbol     = "velocityCurve";
 			parameter.unit       = "";
-			parameter.ranges.def = 0;
-			parameter.ranges.min = 0;
-			parameter.ranges.max = 70;
+			parameter.ranges.def = 0.f;
+			parameter.ranges.min = 0.f;
+			parameter.ranges.max = 70.f;
 			break;
 		case paramCurveClip:
-			parameter.hints      = kParameterIsBoolean;
+			parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
 			parameter.name       = "Curve Clip";
 			parameter.symbol     = "curveClip";
 			parameter.unit       = "";
@@ -217,7 +223,7 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			parameter.ranges.max = 1.f;
 			break;
 		case paramCurveLength:
-			parameter.hints      = kParameterIsBoolean;
+			parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
 			parameter.name       = "Curve Length";
 			parameter.symbol     = "curveLength";
 			parameter.unit       = "";
@@ -226,7 +232,7 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			parameter.ranges.max = 1.f;
 			break;
 		case paramPatternlength:
-			parameter.hints      = kParameterIsInteger;
+			parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
 			parameter.name       = "Pattern length";
 			parameter.symbol     = "patternLength";
 			parameter.unit       = "";
@@ -235,7 +241,7 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			parameter.ranges.max = 8;
 			break;
 		case paramVelocityNote1:
-			parameter.hints      = kParameterIsInteger;
+			parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
 			parameter.name       = "Velocity note 1";
 			parameter.symbol     = "velocityNote1";
 			parameter.unit       = "";
@@ -244,7 +250,7 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			parameter.ranges.max = 127;
 			break;
 		case paramVelocityNote2:
-			parameter.hints      = kParameterIsInteger;
+			parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
 			parameter.name       = "Velocity note 2";
 			parameter.symbol     = "velocityNote2";
 			parameter.unit       = "";
@@ -253,7 +259,7 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			parameter.ranges.max = 127;
 			break;
 		case paramVelocityNote3:
-			parameter.hints      = kParameterIsInteger;
+			parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
 			parameter.name       = "Velocity note 3";
 			parameter.symbol     = "velocityNote3";
 			parameter.unit       = "";
@@ -262,7 +268,7 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			parameter.ranges.max = 127;
 			break;
 		case paramVelocityNote4:
-			parameter.hints      = kParameterIsInteger;
+			parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
 			parameter.name       = "Velocity note 4";
 			parameter.symbol     = "velocityNote4";
 			parameter.unit       = "";
@@ -271,7 +277,7 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			parameter.ranges.max = 127;
 			break;
 		case paramVelocityNote5:
-			parameter.hints      = kParameterIsInteger;
+			parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
 			parameter.name       = "Velocity note 5";
 			parameter.symbol     = "velocityNote5";
 			parameter.unit       = "";
@@ -280,7 +286,7 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			parameter.ranges.max = 127;
 			break;
 		case paramVelocityNote6:
-			parameter.hints      = kParameterIsInteger;
+			parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
 			parameter.name       = "Velocity note 6";
 			parameter.symbol     = "velocityNote6";
 			parameter.unit       = "";
@@ -289,7 +295,7 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			parameter.ranges.max = 127;
 			break;
 		case paramVelocityNote7:
-			parameter.hints      = kParameterIsInteger;
+			parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
 			parameter.name       = "Velocity note 7";
 			parameter.symbol     = "velocityNote7";
 			parameter.unit       = "";
@@ -298,7 +304,7 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			parameter.ranges.max = 127;
 			break;
 		case paramVelocityNote8:
-			parameter.hints      = kParameterIsInteger;
+			parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
 			parameter.name       = "Velocity note 8";
 			parameter.symbol     = "velocityNote8";
 			parameter.unit       = "";
@@ -357,6 +363,7 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			}
 			break;
 		case paramLFO1depth:
+			parameter.hints = kParameterIsAutomable;
 			parameter.name       = "LFO 1 Depth";
 			parameter.symbol     = "lfo1Depth";
 			parameter.unit       = "";
@@ -415,6 +422,7 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			}
 			break;
 		case paramLFO2depth:
+			parameter.hints      = kParameterIsAutomable;
 			parameter.name       = "LFO 2 Depth";
 			parameter.symbol     = "lfo2Depth";
 			parameter.unit       = "";
@@ -424,8 +432,8 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			break;
 		case paramPanic:
 			parameter.hints      = kParameterIsBoolean | kParameterIsTrigger;
-			parameter.name       = "LFO 2 Depth";
-			parameter.symbol     = "lfo2Depth";
+			parameter.name       = "Panic";
+			parameter.symbol     = "panic";
 			parameter.unit       = "";
 			parameter.ranges.def = 0;
 			parameter.ranges.min = 0;
@@ -453,7 +461,7 @@ void PluginSequencer::sampleRateChanged(double newSampleRate)
 {
     (void) newSampleRate;
 
-	sequencer.setSampleRate(static_cast<float>(newSampleRate));
+	sequencer->setSampleRate(static_cast<float>(newSampleRate));
 }
 
 /**
@@ -464,59 +472,59 @@ float PluginSequencer::getParameterValue(uint32_t index) const
 	switch (index)
 	{
 		case paramNotemode:
-			return sequencer.getNotemode();
+			return sequencer->getNotemode();
 		case paramMode:
-			return sequencer.getMode();
+			return sequencer->getMode();
 		case paramDivision:
-			return sequencer.getDivision();
+			return sequencer->getDivision();
 		case paramNoteLength:
-			return sequencer.getNoteLength();
+			return sequencer->getNoteLength();
 		case paramOctaveSpread:
-			return sequencer.getOctaveSpread();
+			return sequencer->getOctaveSpread();
 		case paramPlaymode:
-			return sequencer.getPlaymode();
+			return sequencer->getPlaymode();
 		case paramSwing:
-			return sequencer.getSwing();
+			return sequencer->getSwing();
 		case paramRandomizeTiming:
-			return sequencer.getRandomizeTiming();
+			return sequencer->getRandomizeTiming();
 		case paramVelocityMode:
-			return sequencer.getVelocityMode();
+			return sequencer->getVelocityMode();
 		case paramVelocityCurve:
-			return sequencer.getVelocityCurve();
+			return sequencer->getVelocityCurve();
 		case paramCurveClip:
-			return sequencer.getCurveClip();
+			return sequencer->getCurveClip();
 		case paramCurveLength:
-			return sequencer.getCurveLength();
+			return sequencer->getCurveLength();
 		case paramPatternlength:
-			return sequencer.getPatternlength();
+			return sequencer->getPatternlength();
 		case paramVelocityNote1:
-			return sequencer.getVelocityNote(1);
+			return sequencer->getVelocityNote(0);
 		case paramVelocityNote2:
-			return sequencer.getVelocityNote(2);
+			return sequencer->getVelocityNote(1);
 		case paramVelocityNote3:
-			return sequencer.getVelocityNote(3);
+			return sequencer->getVelocityNote(2);
 		case paramVelocityNote4:
-			return sequencer.getVelocityNote(4);
+			return sequencer->getVelocityNote(3);
 		case paramVelocityNote5:
-			return sequencer.getVelocityNote(5);
+			return sequencer->getVelocityNote(4);
 		case paramVelocityNote6:
-			return sequencer.getVelocityNote(6);
+			return sequencer->getVelocityNote(5);
 		case paramVelocityNote7:
-			return sequencer.getVelocityNote(7);
+			return sequencer->getVelocityNote(6);
 		case paramVelocityNote8:
-			return sequencer.getVelocityNote(8);
+			return sequencer->getVelocityNote(7);
 		case paramConnectLfo1:
-			return sequencer.getConnectLfo1();
+			return sequencer->getConnectLfo1();
 		case paramLFO1depth:
-			return sequencer.getLFO1depth();
+			return sequencer->getLFO1depth();
 		case paramConnectLfo2:
-			return sequencer.getConnectLfo2();
+			return sequencer->getConnectLfo2();
 		case paramLFO2depth:
-			return sequencer.getLFO2depth();
+			return sequencer->getLFO2depth();
 		case paramPanic:
-			return sequencer.getPanic();
+			return sequencer->getPanic();
 		case paramEnabled:
-			return sequencer.getEnabled();
+			return sequencer->getEnabled();
 	}
 }
 
@@ -528,82 +536,85 @@ void PluginSequencer::setParameterValue(uint32_t index, float value)
 	switch (index)
 	{
 		case paramNotemode:
-			sequencer.setNotemode(value);
+			sequencer->setNotemode(value);
 			break;
 		case paramMode:
-			sequencer.setMode(value);
+			sequencer->setMode(value);
 			break;
 		case paramDivision:
-			sequencer.setDivision(value);
+			sequencer->setDivision(value);
 			break;
 		case paramNoteLength:
-			sequencer.setNoteLength(value);
+			sequencer->setNoteLength(value);
 			break;
 		case paramOctaveSpread:
-			sequencer.setOctaveSpread(value);
+			sequencer->setOctaveSpread(value);
 			break;
 		case paramPlaymode:
-			sequencer.setPlaymode(value);
+			sequencer->setPlaymode(value);
 			break;
 		case paramSwing:
-			sequencer.setSwing(value);
+			sequencer->setSwing(value);
 			break;
 		case paramRandomizeTiming:
-			sequencer.setRandomizeTiming(value);
+			sequencer->setRandomizeTiming(value);
 			break;
 		case paramVelocityMode:
-			sequencer.setVelocityMode(value);
+			sequencer->setVelocityMode(value);
 			break;
 		case paramVelocityCurve:
-			sequencer.setVelocityCurve(value);
+			sequencer->setVelocityCurve(value);
 			break;
 		case paramCurveClip:
-			sequencer.setCurveClip(value);
+			sequencer->setCurveClip(value);
 			break;
 		case paramCurveLength:
-			sequencer.setCurveLength(value);
+			sequencer->setCurveLength(value);
 			break;
 		case paramPatternlength:
-			sequencer.setPatternlength(value);
+			sequencer->setPatternlength(value);
 			break;
 		case paramVelocityNote1:
-			sequencer.setVelocityNote(1, value);
+			sequencer->setVelocityNote(0, value);
 			break;
 		case paramVelocityNote2:
-			sequencer.setVelocityNote(2, value);
+			sequencer->setVelocityNote(1, value);
 			break;
 		case paramVelocityNote3:
-			sequencer.setVelocityNote(3, value);
+			sequencer->setVelocityNote(2, value);
 			break;
 		case paramVelocityNote4:
-			sequencer.setVelocityNote(4, value);
+			sequencer->setVelocityNote(3, value);
 			break;
 		case paramVelocityNote5:
-			sequencer.setVelocityNote(5, value);
+			sequencer->setVelocityNote(4, value);
 			break;
 		case paramVelocityNote6:
-			sequencer.setVelocityNote(6, value);
+			sequencer->setVelocityNote(6, value);
 			break;
 		case paramVelocityNote7:
-			sequencer.setVelocityNote(7, value);
+			sequencer->setVelocityNote(6, value);
 			break;
 		case paramVelocityNote8:
-			sequencer.setVelocityNote(8, value);
+			sequencer->setVelocityNote(7, value);
 			break;
 		case paramConnectLfo1:
-			sequencer.setConnectLfo1(value);
+			sequencer->setConnectLfo1(value);
 			break;
 		case paramLFO1depth:
-			sequencer.setLFO1depth(value);
+			sequencer->setLFO1depth(value);
 			break;
 		case paramConnectLfo2:
-			sequencer.setConnectLfo2(value);
+			sequencer->setConnectLfo2(value);
 			break;
 		case paramLFO2depth:
-			sequencer.setPanic(value);
+			sequencer->setLFO1depth(value);
+			break;
+		case paramPanic:
+			sequencer->setPanic(value);
 			break;
 		case paramEnabled:
-			sequencer.setEnabled(value);
+			sequencer->setEnabled(value);
 			break;
 	}
 }
@@ -619,16 +630,16 @@ void PluginSequencer::activate()
 void PluginSequencer::run(const float**, float**, uint32_t n_frames,
                               const MidiEvent* events, uint32_t eventCount)
 {
-	sequencer.emptyMidiBuffer();
+	sequencer->emptyMidiBuffer();
 
 	// Check if host supports Bar-Beat-Tick position
 	const TimePosition& position = getTimePosition();
 	if (!position.bbt.valid) return;
-	sequencer.transmitHostInfo(position.playing, position.bbt.beatsPerBar, position.bbt.beat, position.bbt.barBeat, static_cast<float>(position.bbt.beatsPerMinute));
+	sequencer->transmitHostInfo(position.playing, position.bbt.beatsPerBar, position.bbt.beat, position.bbt.barBeat, static_cast<float>(position.bbt.beatsPerMinute));
 
-	sequencer.process(events, eventCount, n_frames);
+	sequencer->process(events, eventCount, n_frames);
 
-	struct MidiBuffer buffer = sequencer.getMidiBuffer();
+	struct MidiBuffer buffer = sequencer->getMidiBuffer();
 	for (unsigned x = 0; x < buffer.numBufferedEvents + buffer.numBufferedThroughEvents; x++) {
 		writeMidiEvent(buffer.bufferedEvents[x]); //needs to be one struct or array?
 	}
