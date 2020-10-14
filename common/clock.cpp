@@ -13,6 +13,7 @@ PluginClock::PluginClock() :
 	pos(0),
 	bpm(120.0),
 	swing(0.0),
+	randomize(0.0),
 	internalBpm(120.0),
 	previousBpm(0),
 	sampleRate(48000.0),
@@ -22,6 +23,8 @@ PluginClock::PluginClock() :
 	triggerIndex(0)
 {
 	//TODO everything initialized?
+	srand (static_cast <unsigned> (time(0)));
+	randomValue = LO + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(HI-LO)));
 }
 
 PluginClock::~PluginClock()
@@ -77,6 +80,11 @@ void PluginClock::setBpm(float bpm)
 {
 	this->bpm = bpm;
 	calcPeriod();
+}
+
+void PluginClock::setRandomizeTiming(float randomize)
+{
+	this->randomize = randomize;
 }
 
 void PluginClock::setSwing(float swing)
@@ -171,6 +179,11 @@ float PluginClock::getSwing() const
 	return swing;
 }
 
+float PluginClock::getRandomizeTiming() const
+{
+	return randomize;
+}
+
 void PluginClock::tick()
 {
 	int beat = static_cast<int>(hostBarBeat);
@@ -224,11 +237,16 @@ void PluginClock::tick()
 		pos = 0;
 	}
 
+	float applied_swing = (swing * 0.5) + (randomize * randomValue);
+	applied_swing = (applied_swing > 0.5) ? 0.5 : applied_swing;
+	applied_swing = (applied_swing < -0.5) ? -0.5 : applied_swing;
+
 	uint32_t triggerPos[2];
 	triggerPos[0] = 0;
-	triggerPos[1] = static_cast<uint32_t>(halfWavelength + (halfWavelength * (swing * 0.5)));
+	triggerPos[1] = static_cast<uint32_t>(halfWavelength + (halfWavelength * applied_swing));
 
 	if (pos == triggerPos[triggerIndex] && !trigger) {
+		randomValue = LO + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(HI-LO)));
 		gate = true;
 		trigger = true;
 	} else if (pos > triggerPos[triggerIndex] && trigger) {

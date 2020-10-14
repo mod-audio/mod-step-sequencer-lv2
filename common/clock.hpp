@@ -3,6 +3,11 @@
 
 #include <cstdint>
 #include <math.h>
+#include <cstdlib>
+#include <ctime>
+
+#define LO -1
+#define HI 1
 
 enum SyncMode {
 	FREE_RUNNING = 0,
@@ -21,6 +26,7 @@ public:
 	void setInternalBpmValue(float internalBpm);
 	void setDivision(int division);
 	void setSwing(float swing);
+	void setRandomizeTiming(float randomize);
 	void syncClock();
 	void setPos(uint32_t pos);
 	void setNumBarsElapsed(uint32_t numBarsElapsed);
@@ -35,6 +41,7 @@ public:
 	uint32_t getPeriod() const;
 	uint32_t getPos() const;
 	float getSwing() const;
+	float getRandomizeTiming() const;
 	void tick();
 
 private:
@@ -54,9 +61,11 @@ private:
 	uint32_t quarterWaveLength;
 	uint32_t pos;
 
+	float randomValue;
 	float beatsPerBar;
 	float bpm;
 	float swing;
+	float randomize;
 	float internalBpm;
 	float hostBpm;
 	float previousBpm;

@@ -79,7 +79,7 @@ void Sequencer::setSwing(float value)
 
 void Sequencer::setRandomizeTiming(float value)
 {
-	randomizeTiming = value;
+	clock.setRandomizeTiming(value);
 }
 
 void Sequencer::setVelocityMode(int value)
@@ -184,7 +184,7 @@ float Sequencer::getSwing() const
 
 float Sequencer::getRandomizeTiming() const
 {
-	return randomizeTiming;
+	return clock.getRandomizeTiming();
 }
 
 int Sequencer::getVelocityMode() const
