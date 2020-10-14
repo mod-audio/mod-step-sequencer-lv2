@@ -291,7 +291,7 @@ void Sequencer::emptyMidiBuffer()
 	midiHandler.emptyMidiBuffer();
 }
 
-void Sequencer::clear()
+void Sequencer::clear() //TODO reset?
 {
 	numActiveNotes = 0;
 	notePlayed = 0;
@@ -299,6 +299,10 @@ void Sequencer::clear()
 		midiNotes[i][MIDI_NOTE] = EMPTY_SLOT;
 		midiNotes[i][MIDI_CHANNEL] = 0;
 		midiNotes[i][NOTE_TYPE] = 0;
+	}
+
+	for (unsigned o = 0; o < NUM_OCTAVE_MODES; o++) {
+		octavePattern[o]->reset();
 	}
 }
 
@@ -508,7 +512,7 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 			if (noteOffBuffer[i][MIDI_NOTE] != EMPTY_SLOT) {
 				noteOffBuffer[i][TIMER] += 1;
 				uint32_t duration = static_cast<uint32_t>((noteOffBuffer[i][NOTE_TYPE] != 2) ? clock.getPeriod() * noteLength : clock.getPeriod());
-				duration *= 0.5; 
+				duration *= 0.5;
 				if (noteOffBuffer[i][TIMER] > duration) {
 					midiEvent.frame = s;
 					midiEvent.size = 3;

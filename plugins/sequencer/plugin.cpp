@@ -128,22 +128,22 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			parameter.hints = kParameterIsAutomable | kParameterIsInteger;
 			parameter.name = "Octave Spread";
 			parameter.symbol = "octaveSpread";
-			parameter.ranges.def = 0;
-			parameter.ranges.min = 0;
-			parameter.ranges.max = 3;
+			parameter.ranges.def = 1;
+			parameter.ranges.min = 1;
+			parameter.ranges.max = 4;
 			parameter.enumValues.count = 4;
 			parameter.enumValues.restrictedMode = true;
 			{
 				ParameterEnumerationValue* const channels = new ParameterEnumerationValue[4];
 				parameter.enumValues.values = channels;
 				channels[0].label = "1 oct";
-				channels[0].value = 0;
+				channels[0].value = 1;
 				channels[1].label = "2 oct";
-				channels[1].value = 1;
+				channels[1].value = 2;
 				channels[2].label = "3 oct";
-				channels[2].value = 2;
+				channels[2].value = 3;
 				channels[3].label = "4 oct";
-				channels[3].value = 3;
+				channels[3].value = 4;
 			}
 			break;
 		case paramPlaymode:
