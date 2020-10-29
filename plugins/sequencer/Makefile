@@ -31,6 +31,7 @@ FILES_DSP = \
 	velocityLFO.cpp \
 	lfoHandler.cpp \
 	velocityhandler.cpp \
+	metaRecorder.cpp \
 	utils.cpp \
 	../../common/midiHandler.cpp \
 	../../common/clock.cpp \

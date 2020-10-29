@@ -26,7 +26,8 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 {
 	if (index >= paramCount) return;
 
-	switch (index) {
+	switch (index)
+	{
 		case paramNotemode:
 			parameter.hints = kParameterIsAutomable | kParameterIsInteger;
 			parameter.name = "Notemode";
@@ -439,6 +440,15 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			parameter.ranges.min = 0.f;
 			parameter.ranges.max = 100.f;
 			break;
+		case paramMetaRecord:
+			parameter.hints      = kParameterIsBoolean;
+			parameter.name       = "metaRecord";
+			parameter.symbol     = "metaRecord";
+			parameter.unit       = "";
+			parameter.ranges.def = 0;
+			parameter.ranges.min = 0;
+			parameter.ranges.max = 1;
+			break;
 		case paramPanic:
 			parameter.hints      = kParameterIsBoolean | kParameterIsTrigger;
 			parameter.name       = "Panic";
@@ -532,6 +542,8 @@ float PluginSequencer::getParameterValue(uint32_t index) const
 			return sequencer->getConnectLfo2();
 		case paramLFO2depth:
 			return sequencer->getLFO2depth();
+		case paramMetaRecord:
+			return sequencer->getMetaRecord();
 		case paramPanic:
 			return sequencer->getPanic();
 		case paramEnabled:
@@ -623,6 +635,9 @@ void PluginSequencer::setParameterValue(uint32_t index, float value)
 			break;
 		case paramLFO2depth:
 			sequencer->setLFO1depth(value);
+			break;
+		case paramMetaRecord:
+			sequencer->setMetaRecord(value);
 			break;
 		case paramPanic:
 			sequencer->setPanic(value);

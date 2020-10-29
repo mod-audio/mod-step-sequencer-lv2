@@ -39,6 +39,7 @@ public:
 		paramLFO1depth,
 		paramConnectLfo2,
 		paramLFO2depth,
+		paramMetaRecord,
 		paramPanic,
 		paramEnabled,
 		paramCount

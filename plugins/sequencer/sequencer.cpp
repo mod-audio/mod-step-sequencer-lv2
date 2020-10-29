@@ -137,6 +137,11 @@ void Sequencer::setLFO2depth(float value)
 	lFO2depth = value;
 }
 
+void Sequencer::setMetaRecord(bool value)
+{
+	metaRecorder.setRecordingMode(value);
+}
+
 void Sequencer::setPanic(bool value)
 {
 	panic = value;
@@ -242,6 +247,11 @@ float Sequencer::getLFO2depth() const
 	return lFO2depth;
 }
 
+bool Sequencer::getMetaRecord() const
+{
+	return metaRecorder.getRecordingMode();
+}
+
 bool Sequencer::getPanic() const
 {
 	return panic;
@@ -324,19 +334,9 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 	for (uint32_t i=0; i<eventCount; ++i) {
 
 		uint8_t status = events[i].data[0] & 0xF0;
-
 		uint8_t midiNote = events[i].data[1];
-		uint8_t noteToFind;
-		size_t searchNote;
 
 		if (sequencerEnabled) {
-
-			//midiNotesCopied = false;
-
-			//bool voiceFound;
-			//bool pitchFound;
-			//size_t findFreeVoice;
-			//size_t findActivePitch;
 
 			if (midiNote == 0x7b && events[i].size == 3) {
 				clear();
@@ -463,6 +463,19 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 			break;
 	}
 
+	if (metaRecorder.recordingQued()) {
+
+		for (int e = 0; e < metaRecorder.getRecLength(); e++) {
+			midiNotes[e][MIDI_NOTE] = metaRecorder.getMidiBuffer(e, MIDI_NOTE);
+			midiNotes[e][MIDI_CHANNEL] = metaRecorder.getMidiBuffer(e, MIDI_CHANNEL);
+			midiNotes[e][NOTE_TYPE] = metaRecorder.getMidiBuffer(e, NOTE_TYPE);
+		}
+		notePlayed = 0;
+		transpose = 0;
+		numActiveNotes = metaRecorder.getRecLength();
+		metaRecorder.setQue(false);
+	}
+
 	for (unsigned s = 0; s < n_frames; s++) {
 
 		clock.tick();
@@ -483,10 +496,13 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 
 					if (sequencerEnabled) {
 
+
 						uint8_t octave = octavePattern[octaveMode]->getStep() * 12;
 						octavePattern[octaveMode]->goToNextStep();
 
 						midiNote = midiNote + octave + transpose;
+
+						metaRecorder.record(midiNote, channel, noteType);
 
 						midiEvent.frame = s;
 						midiEvent.size = 3;
@@ -525,7 +541,6 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 					noteOffBuffer[i][MIDI_NOTE] = EMPTY_SLOT;
 					noteOffBuffer[i][MIDI_CHANNEL] = 0;
 					noteOffBuffer[i][TIMER] = 0;
-
 				}
 			}
 		}

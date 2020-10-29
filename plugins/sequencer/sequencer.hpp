@@ -8,12 +8,11 @@
 #include "../../common/midiHandler.hpp"
 #include "utils.hpp"
 #include "velocityhandler.hpp"
-
+#include "metaRecorder.hpp"
 
 #define NUM_VOICES 200
 #define NUM_NOTE_OFF_SLOTS 200
 #define PLUGIN_URI "http://moddevices.com/plugins/mod-devel/sequencer"
-
 
 #define MIDI_NOTEOFF 0x80
 #define MIDI_NOTEON  0x90
@@ -83,6 +82,7 @@ public:
 	void setLFO1depth(float value);
 	void setConnectLfo2(int value);
 	void setLFO2depth(float value);
+	void setMetaRecord(bool value);
 	void setPanic(bool value);
 	void setEnabled(bool value);
 	int getNotemode() const;
@@ -104,6 +104,7 @@ public:
 	float getLFO1depth() const;
 	int getConnectLfo2() const;
 	float getLFO2depth() const;
+	bool getMetaRecord() const;
 	bool getPanic() const;
 	bool getEnabled() const;
 
@@ -184,6 +185,7 @@ private:
 	MidiHandler midiHandler;
 	PluginClock clock;
 	VelocityHandler *velocityHandler;
+	MetaRecorder metaRecorder;
 };
 
 #endif // _H_SEQUENCER_
