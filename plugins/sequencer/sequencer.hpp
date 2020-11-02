@@ -117,6 +117,10 @@ public:
 	void process(const MidiEvent* event, uint32_t eventCount, uint32_t n_frames);
 private:
 
+	uint32_t* period;
+	uint32_t* clockPos;
+	int* division;
+
 	int notesPressed = 0;
 	int activeNotes = 0;
 	int notePlayed = 0;
@@ -157,7 +161,6 @@ private:
 	int overwriteIndex = 0;
 	int noteMode = 0;
 	int mode = 0;
-	int division = 0;
 	float noteLength = 0.8;
 	int octaveSpread = 1;
 	int playMode = 0;
@@ -185,7 +188,7 @@ private:
 	MidiHandler midiHandler;
 	PluginClock clock;
 	VelocityHandler *velocityHandler;
-	MetaRecorder metaRecorder;
+	MetaRecorder *metaRecorder;
 };
 
 #endif // _H_SEQUENCER_

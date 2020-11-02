@@ -159,19 +159,19 @@ float PluginClock::getInternalBpmValue() const
 	return internalBpm;
 }
 
-int PluginClock::getDivision() const
+int* PluginClock::getDivision()
 {
-	return division;
+	return &division;
 }
 
-uint32_t PluginClock::getPeriod() const
+uint32_t* PluginClock::getPeriod()
 {
-	return period;
+	return &period;
 }
 
-uint32_t PluginClock::getPos() const
+uint32_t* PluginClock::getPos()
 {
-	return pos;
+	return &pos;
 }
 
 float PluginClock::getSwing() const

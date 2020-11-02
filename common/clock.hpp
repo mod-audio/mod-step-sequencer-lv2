@@ -34,15 +34,15 @@ public:
 	void closeGate();
 	void reset();
 	bool getGate() const;
-	float getSampleRate() const;
-	int getSyncMode() const;
-	float getInternalBpmValue() const;
-	int getDivision() const;
-	uint32_t getPeriod() const;
-	uint32_t getPos() const;
-	float getSwing() const;
-	float getRandomizeTiming() const;
-	void tick();
+	float    getSampleRate() const;
+	int      getSyncMode() const;
+	float    getInternalBpmValue() const;
+	int      *getDivision();
+	uint32_t *getPeriod();
+	uint32_t *getPos();
+	float    getSwing() const;
+	float    getRandomizeTiming() const;
+	void     tick();
 
 private:
 	void setBpm(float bpm);

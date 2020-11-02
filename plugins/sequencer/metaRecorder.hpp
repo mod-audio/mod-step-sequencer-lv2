@@ -14,6 +14,7 @@
 
 class MetaRecorder {
 public:
+	MetaRecorder(uint32_t *period, uint32_t *clockPos, int *division);
 	MetaRecorder();
 	~MetaRecorder();
 	bool recordingQued();
@@ -23,6 +24,7 @@ public:
 	void setQue(bool recQued);
 	void setBeatPos(float beatPos);
 	void clearRecording();
+	void calculateQuantizeCoef();
 	void setRecordingMode(int mode);
 	void record(uint8_t midiNote, uint8_t channel, uint8_t noteType);
 private:
@@ -30,6 +32,7 @@ private:
 		STOP_RECORDING = 0,
 		START_RECORDING
 	};
+	float coef;
 	float beatPos;
 	bool recording = false;
 	bool newRecording = false;
@@ -40,6 +43,11 @@ private:
 	int recIndex = 0;
 	uint8_t preRecordMidiBuffer[NOTE_TYPE + 1];
 	uint8_t midiBuffer[BUFFER_LENGTH][NOTE_TYPE + 1];
+
+
+	int *division;
+	uint32_t *clockPos;
+	uint32_t *period;
 };
 
 #endif //_H_META_RECORDER_

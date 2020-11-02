@@ -3,9 +3,15 @@
 
 Sequencer::Sequencer(double sampleRate) : velocityHandler(new VelocityHandler(static_cast<float>(sampleRate)))
 {
+	period = clock.getPeriod();
+	clockPos = clock.getPos();
+	division = clock.getDivision();
+
+	metaRecorder = new MetaRecorder(period, clockPos, division);
 	clock.transmitHostInfo(0, 4, 1, 1, 120.0);
 	clock.setSampleRate(static_cast<float>(sampleRate));
 	clock.setDivision(7);
+	clock.setSyncMode(2);
 
 	octavePattern = new Pattern*[5];
 
@@ -139,7 +145,7 @@ void Sequencer::setLFO2depth(float value)
 
 void Sequencer::setMetaRecord(bool value)
 {
-	metaRecorder.setRecordingMode(value);
+	metaRecorder->setRecordingMode(value);
 }
 
 void Sequencer::setPanic(bool value)
@@ -164,7 +170,7 @@ int Sequencer::getMode() const
 
 int Sequencer::getDivision() const
 {
-	return division;
+	return *division;
 }
 
 float Sequencer::getNoteLength() const
@@ -249,7 +255,7 @@ float Sequencer::getLFO2depth() const
 
 bool Sequencer::getMetaRecord() const
 {
-	return metaRecorder.getRecordingMode();
+	return metaRecorder->getRecordingMode();
 }
 
 bool Sequencer::getPanic() const
@@ -463,17 +469,17 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 			break;
 	}
 
-	if (metaRecorder.recordingQued()) {
+	if (metaRecorder->recordingQued()) {
 
-		for (int e = 0; e < metaRecorder.getRecLength(); e++) {
-			midiNotes[e][MIDI_NOTE] = metaRecorder.getMidiBuffer(e, MIDI_NOTE);
-			midiNotes[e][MIDI_CHANNEL] = metaRecorder.getMidiBuffer(e, MIDI_CHANNEL);
-			midiNotes[e][NOTE_TYPE] = metaRecorder.getMidiBuffer(e, NOTE_TYPE);
+		for (int e = 0; e < metaRecorder->getRecLength(); e++) {
+			midiNotes[e][MIDI_NOTE] = metaRecorder->getMidiBuffer(e, MIDI_NOTE);
+			midiNotes[e][MIDI_CHANNEL] = metaRecorder->getMidiBuffer(e, MIDI_CHANNEL);
+			midiNotes[e][NOTE_TYPE] = metaRecorder->getMidiBuffer(e, NOTE_TYPE);
 		}
 		notePlayed = 0;
 		transpose = 0;
-		numActiveNotes = metaRecorder.getRecLength();
-		metaRecorder.setQue(false);
+		numActiveNotes = metaRecorder->getRecLength();
+		metaRecorder->setQue(false);
 	}
 
 	for (unsigned s = 0; s < n_frames; s++) {
@@ -496,13 +502,12 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 
 					if (sequencerEnabled) {
 
-
 						uint8_t octave = octavePattern[octaveMode]->getStep() * 12;
 						octavePattern[octaveMode]->goToNextStep();
 
 						midiNote = midiNote + octave + transpose;
 
-						metaRecorder.record(midiNote, channel, noteType);
+						metaRecorder->record(midiNote, channel, noteType);
 
 						midiEvent.frame = s;
 						midiEvent.size = 3;
@@ -527,7 +532,7 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 		for (size_t i = 0; i < NUM_NOTE_OFF_SLOTS; i++) {
 			if (noteOffBuffer[i][MIDI_NOTE] != EMPTY_SLOT) {
 				noteOffBuffer[i][TIMER] += 1;
-				uint32_t duration = static_cast<uint32_t>((noteOffBuffer[i][NOTE_TYPE] != 2) ? clock.getPeriod() * noteLength : clock.getPeriod());
+				uint32_t duration = static_cast<uint32_t>((noteOffBuffer[i][NOTE_TYPE] != 2) ? *clock.getPeriod() * noteLength : *clock.getPeriod());
 				duration *= 0.5;
 				if (noteOffBuffer[i][TIMER] > duration) {
 					midiEvent.frame = s;
