@@ -24,6 +24,7 @@
 
 #define NUM_ARP_MODES 6
 #define NUM_OCTAVE_MODES 5
+#define NUM_STATES 40
 
 #define NUM_MIDI_CHANNELS 16 //TODO check how many are needed
 
@@ -116,6 +117,11 @@ public:
 	struct MidiBuffer getMidiBuffer();
 	void process(const MidiEvent* event, uint32_t eventCount, uint32_t n_frames);
 private:
+	
+	struct PrevState {
+		uint8_t midiNotes[NUM_STATES][NUM_VOICES][3];
+		int numAcitveNotes;
+	};
 
 	uint32_t* period;
 	uint32_t* clockPos;
@@ -138,6 +144,7 @@ private:
 	int transpose = 0;
 	int previousSyncMode = 0;
 	int activeNotesIndex = 0;
+	int stateIndex = 0;
 	int activeNotesBypassed = 0;
 	int timeOutTime = 5000;
 	int firstNoteTimer = 0;
@@ -183,6 +190,7 @@ private:
 	bool recording = false;
 	bool playing = false;
 
+	PrevState prevState;
 	SeqUtils utils;
 	Pattern **octavePattern;
 	MidiHandler midiHandler;

@@ -36,6 +36,8 @@ Sequencer::Sequencer(double sampleRate) : velocityHandler(new VelocityHandler(st
 
 Sequencer::~Sequencer()
 {
+	delete metaRecorder;
+	metaRecorder = nullptr;
 	delete velocityHandler;
 	velocityHandler = nullptr;
 	delete[] octavePattern;
@@ -56,6 +58,26 @@ void Sequencer::setNotemode(int value)
 void Sequencer::setMode(int value)
 {
 	mode = value;
+
+
+	switch (mode)
+	{
+		case STATE_CLEAR_ALL:
+			clear();
+			break;
+		case STATE_STOP:
+			playing = false;
+			break;
+		case STATE_UNDO_LAST:
+			//undo
+			for (int i = 0; i < prevState.numAcitveNotes; i++) {
+				midiNotes[i][MIDI_NOTE]    = prevState.midiNotes[stateIndex][i][MIDI_NOTE];
+				midiNotes[i][MIDI_CHANNEL] = prevState.midiNotes[stateIndex][i][MIDI_CHANNEL];
+				midiNotes[i][NOTE_TYPE]    = prevState.midiNotes[stateIndex][i][NOTE_TYPE];
+			}
+			stateIndex = (stateIndex > 0) ? stateIndex - 1 : stateIndex;
+			break;
+	}
 }
 
 void Sequencer::setDivision(int value)
@@ -352,6 +374,20 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 
 			switch(status) {
 				case MIDI_NOTEON:
+					//store previous state
+
+					if (numActiveNotes > 0) {
+						//added new state
+						for (int p = 0; p < numActiveNotes; p++) {
+							prevState.midiNotes[stateIndex][p][MIDI_NOTE] = midiNote;
+							prevState.midiNotes[stateIndex][p][MIDI_CHANNEL] = channel;
+							prevState.midiNotes[stateIndex][p][NOTE_TYPE] = noteMode;
+						}
+						prevState.numAcitveNotes = numActiveNotes;
+						stateIndex = (stateIndex + 1) % NUM_STATES;
+					}
+
+
 					switch (mode)
 					{
 						case STATE_RECORD:
@@ -363,7 +399,7 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 							midiNotes[numActiveNotes][MIDI_NOTE] = midiNote;
 							midiNotes[numActiveNotes][MIDI_CHANNEL] = channel;
 							midiNotes[numActiveNotes][NOTE_TYPE] = noteMode;
-							numActiveNotes++;
+							numActiveNotes = (numActiveNotes + 1) % NUM_VOICES;
 							overwrite = false;
 							break;
 						case STATE_PLAY:
@@ -393,7 +429,7 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 							midiNotes[numActiveNotes][MIDI_NOTE] = midiNote;
 							midiNotes[numActiveNotes][MIDI_CHANNEL] = channel;
 							midiNotes[overwriteIndex][NOTE_TYPE] = noteMode;
-							numActiveNotes++;
+							numActiveNotes = (numActiveNotes + 1) % NUM_VOICES;
 							overwrite = false;
 							break;
 					}
@@ -455,18 +491,6 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 		if (playMode != PLAY_MOMENTARY) {
 			playing = true;
 		}
-	}
-
-	switch (mode)
-	{
-		case STATE_CLEAR_ALL:
-			clear();
-			break;
-		case STATE_STOP:
-			playing = false;
-			break;
-		case STATE_UNDO_LAST:
-			break;
 	}
 
 	if (metaRecorder->recordingQued()) {

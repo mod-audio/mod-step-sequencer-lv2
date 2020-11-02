@@ -79,6 +79,7 @@ void MetaRecorder::record(uint8_t midiNote, uint8_t channel, uint8_t noteType)
 					recLength = recIndex;
 					recQued = true;
 					recording = false;
+					recIndex = 0;
 				}
 				break;
 			case START_RECORDING:
