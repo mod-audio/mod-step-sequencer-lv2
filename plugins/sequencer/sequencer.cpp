@@ -70,12 +70,16 @@ void Sequencer::setMode(int value)
 			break;
 		case STATE_UNDO_LAST:
 			//undo
-			for (int i = 0; i < prevState.numAcitveNotes; i++) {
-				midiNotes[i][MIDI_NOTE]    = prevState.midiNotes[stateIndex][i][MIDI_NOTE];
-				midiNotes[i][MIDI_CHANNEL] = prevState.midiNotes[stateIndex][i][MIDI_CHANNEL];
-				midiNotes[i][NOTE_TYPE]    = prevState.midiNotes[stateIndex][i][NOTE_TYPE];
-			}
+            if (stateIndex > 0) {
+                for (int i = 0; i < prevState.numAcitveNotes; i++) {
+                    midiNotes[i][MIDI_NOTE]    = prevState.midiNotes[stateIndex - 1][i][MIDI_NOTE];
+                    midiNotes[i][MIDI_CHANNEL] = prevState.midiNotes[stateIndex - 1][i][MIDI_CHANNEL];
+                    midiNotes[i][NOTE_TYPE]    = prevState.midiNotes[stateIndex - 1][i][NOTE_TYPE];
+                }
+            }
 			stateIndex = (stateIndex > 0) ? stateIndex - 1 : stateIndex;
+			notePlayed = notePlayed % prevState.numAcitveNotes;
+			numActiveNotes = prevState.numAcitveNotes;
 			break;
 	}
 }
@@ -375,13 +379,12 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 			switch(status) {
 				case MIDI_NOTEON:
 					//store previous state
-
 					if (numActiveNotes > 0) {
 						//added new state
 						for (int p = 0; p < numActiveNotes; p++) {
-							prevState.midiNotes[stateIndex][p][MIDI_NOTE] = midiNote;
-							prevState.midiNotes[stateIndex][p][MIDI_CHANNEL] = channel;
-							prevState.midiNotes[stateIndex][p][NOTE_TYPE] = noteMode;
+							prevState.midiNotes[stateIndex][p][MIDI_NOTE]    = midiNotes[p][MIDI_NOTE];
+							prevState.midiNotes[stateIndex][p][MIDI_CHANNEL] = midiNotes[p][MIDI_CHANNEL];
+							prevState.midiNotes[stateIndex][p][NOTE_TYPE]    = midiNotes[p][NOTE_TYPE];
 						}
 						prevState.numAcitveNotes = numActiveNotes;
 						stateIndex = (stateIndex + 1) % NUM_STATES;

@@ -13,12 +13,6 @@ recLength(0)
 
 MetaRecorder::~MetaRecorder()
 {
-	delete period;
-	period = nullptr;
-	delete clockPos;
-	clockPos = nullptr;
-	delete division;
-	division = nullptr;
 }
 
 bool MetaRecorder::recordingQued()
