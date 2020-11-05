@@ -16,6 +16,7 @@ public:
 		paramNotemode = 0,
 		paramMode,
 		paramDivision,
+		paramQuantizeMode,
 		paramNoteLength,
 		paramOctaveSpread,
 		paramPlaymode,

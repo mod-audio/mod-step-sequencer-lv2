@@ -25,6 +25,8 @@ PluginClock::PluginClock() :
 	//TODO everything initialized?
 	srand (static_cast <unsigned> (time(0)));
 	randomValue = LO + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(HI-LO)));
+
+	numFramesQuarterNote = (60 / bpm) * sampleRate;
 }
 
 PluginClock::~PluginClock()
@@ -80,6 +82,7 @@ void PluginClock::setBpm(float bpm)
 {
 	this->bpm = bpm;
 	calcPeriod();
+	numFramesQuarterNote = (60 / bpm) * sampleRate;
 }
 
 void PluginClock::setRandomizeTiming(float randomize)
@@ -108,7 +111,7 @@ void PluginClock::setDivision(int setDivision)
 
 void PluginClock::syncClock()
 {
-    pos = static_cast<uint32_t>((fmod(sampleRate * (60.0f / bpm) * (hostBarBeat + (numBarsElapsed * beatsPerBar)), sampleRate * (60.0f / (bpm * (divisionValue/2.f)))) * 2.0));
+    pos = static_cast<uint32_t>((fmod((sampleRate * (60.0f / (bpm*2)) * (hostBarBeat + (numBarsElapsed * beatsPerBar))), sampleRate * (60.0f / (bpm * (divisionValue/2.f)))) * 2.0));
 }
 
 void PluginClock::setPos(uint32_t pos)
@@ -137,6 +140,11 @@ void PluginClock::closeGate()
 void PluginClock::reset()
 {
 	trigger = false;
+}
+
+uint32_t PluginClock::getNumFramesQuarterNote()
+{
+    return numFramesQuarterNote;
 }
 
 float PluginClock::getSampleRate() const
@@ -221,7 +229,7 @@ void PluginClock::tick()
 				previousSyncMode = syncMode;
 			}
 			break;
-		case HOST_QUANTIZED_SYNC: //TODO fix this duplicate
+		case HOST_QUANTIZED_SYNC:
 			if ((hostBpm != previousBpm && (fabs(previousBpm - hostBpm) > threshold)) || (syncMode != previousSyncMode)) {
 				setBpm(hostBpm);
 				if (playing) {
@@ -245,16 +253,14 @@ void PluginClock::tick()
 	triggerPos[0] = 0;
 	triggerPos[1] = static_cast<uint32_t>(halfWavelength + (halfWavelength * applied_swing));
 
-	if (pos == triggerPos[triggerIndex] && !trigger) {
+	if (pos < triggerPos[1] && trigger) {
+		triggerIndex ^= 1;
+		trigger = false;
+	}
+	if (pos >= triggerPos[triggerIndex] && !trigger) {
 		randomValue = LO + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(HI-LO)));
 		gate = true;
 		trigger = true;
-	} else if (pos > triggerPos[triggerIndex] && trigger) {
-		if (playing && beatSync) {
-			syncClock();
-		}
-		triggerIndex ^= 1;
-		trigger = false;
 	}
 
 	if (playing && beatSync) {

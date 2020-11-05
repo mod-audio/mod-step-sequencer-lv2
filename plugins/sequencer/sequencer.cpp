@@ -89,6 +89,11 @@ void Sequencer::setDivision(int value)
 	clock.setDivision(value);
 }
 
+void Sequencer::setQuantizeMode(int value)
+{
+    quantizeMode = value;
+}
+
 void Sequencer::setNoteLength(float value)
 {
 	noteLength = value;
@@ -197,6 +202,11 @@ int Sequencer::getMode() const
 int Sequencer::getDivision() const
 {
 	return *division;
+}
+
+int Sequencer::getQuantizeMode() const
+{
+	return quantizeMode;
 }
 
 float Sequencer::getNoteLength() const
@@ -491,10 +501,11 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 
 	if (mode == STATE_PLAY) {
 		recording = false;
-		if (playMode != PLAY_MOMENTARY) {
-			playing = true;
-		}
-	}
+        if (playMode != PLAY_MOMENTARY 
+                && ((uint32_t)(barBeat * clock.getNumFramesQuarterNote()) % clock.getNumFramesQuarterNote() < 30)) {
+            playing = true;
+        }
+    }
 
 	if (metaRecorder->recordingQued()) {
 

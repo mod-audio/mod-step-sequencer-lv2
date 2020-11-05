@@ -33,7 +33,8 @@ public:
 	void calcPeriod();
 	void closeGate();
 	void reset();
-	bool getGate() const;
+    uint32_t getNumFramesQuarterNote();
+	bool     getGate() const;
 	float    getSampleRate() const;
 	int      getSyncMode() const;
 	float    getInternalBpmValue() const;
@@ -60,6 +61,7 @@ private:
 	uint32_t halfWavelength;
 	uint32_t quarterWaveLength;
 	uint32_t pos;
+    uint32_t numFramesQuarterNote;
 
 	float randomValue;
 	float beatsPerBar;

@@ -174,6 +174,34 @@
     [
         a lv2:InputPort, lv2:ControlPort ;
         lv2:index 5 ;
+        lv2:name """QuantizeMode""" ;
+        lv2:symbol "QuantizeMode" ;
+        lv2:default 0 ;
+        lv2:minimum 0 ;
+        lv2:maximum 12 ;
+        lv2:portProperty lv2:enumeration ;
+        lv2:scalePoint [
+            rdfs:label  """1 bar""" ;
+            rdf:value 0 ;
+        ] ,
+        [
+            rdfs:label  """1/4""" ;
+            rdf:value 3 ;
+        ] ,
+        [
+            rdfs:label  """1/16""" ;
+            rdf:value 9 ;
+        ] ,
+        [
+            rdfs:label  """1/32""" ;
+            rdf:value 12 ;
+        ] ;
+
+        lv2:portProperty lv2:integer ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 6 ;
         lv2:name """Note Length""" ;
         lv2:symbol "noteLength" ;
         lv2:default 0.800000 ;
@@ -182,7 +210,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 6 ;
+        lv2:index 7 ;
         lv2:name """Octave Spread""" ;
         lv2:symbol "octaveSpread" ;
         lv2:default 1 ;
@@ -210,7 +238,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 7 ;
+        lv2:index 8 ;
         lv2:name """Play Mode""" ;
         lv2:symbol "playMode" ;
         lv2:default 1 ;
@@ -234,7 +262,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 8 ;
+        lv2:index 9 ;
         lv2:name """Swing""" ;
         lv2:symbol "swing" ;
         lv2:default 0.000000 ;
@@ -243,7 +271,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 9 ;
+        lv2:index 10 ;
         lv2:name """Randomize Timing""" ;
         lv2:symbol "randomizeTiming" ;
         lv2:default 0.000000 ;
@@ -252,7 +280,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 10 ;
+        lv2:index 11 ;
         lv2:name """Velocity Mode""" ;
         lv2:symbol "velocityMode" ;
         lv2:default 0 ;
@@ -276,7 +304,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 11 ;
+        lv2:index 12 ;
         lv2:name """Velocity Curve""" ;
         lv2:symbol "velocityCurve" ;
         lv2:default 0 ;
@@ -286,7 +314,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 12 ;
+        lv2:index 13 ;
         lv2:name """Curve Depth""" ;
         lv2:symbol "curveDepth" ;
         lv2:default 0.000000 ;
@@ -295,7 +323,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 13 ;
+        lv2:index 14 ;
         lv2:name """Curve Clip""" ;
         lv2:symbol "curveClip" ;
         lv2:default 0.000000 ;
@@ -305,7 +333,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 14 ;
+        lv2:index 15 ;
         lv2:name """Curve Length""" ;
         lv2:symbol "curveLength" ;
         lv2:default 1 ;
@@ -315,7 +343,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 15 ;
+        lv2:index 16 ;
         lv2:name """Pattern length""" ;
         lv2:symbol "patternLength" ;
         lv2:default 1 ;
@@ -325,7 +353,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 16 ;
+        lv2:index 17 ;
         lv2:name """Velocity note 1""" ;
         lv2:symbol "velocityNote1" ;
         lv2:default 100 ;
@@ -335,7 +363,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 17 ;
+        lv2:index 18 ;
         lv2:name """Velocity note 2""" ;
         lv2:symbol "velocityNote2" ;
         lv2:default 100 ;
@@ -345,7 +373,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 18 ;
+        lv2:index 19 ;
         lv2:name """Velocity note 3""" ;
         lv2:symbol "velocityNote3" ;
         lv2:default 100 ;
@@ -355,7 +383,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 19 ;
+        lv2:index 20 ;
         lv2:name """Velocity note 4""" ;
         lv2:symbol "velocityNote4" ;
         lv2:default 100 ;
@@ -365,7 +393,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 20 ;
+        lv2:index 21 ;
         lv2:name """Velocity note 5""" ;
         lv2:symbol "velocityNote5" ;
         lv2:default 100 ;
@@ -375,7 +403,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 21 ;
+        lv2:index 22 ;
         lv2:name """Velocity note 6""" ;
         lv2:symbol "velocityNote6" ;
         lv2:default 100 ;
@@ -385,7 +413,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 22 ;
+        lv2:index 23 ;
         lv2:name """Velocity note 7""" ;
         lv2:symbol "velocityNote7" ;
         lv2:default 100 ;
@@ -395,7 +423,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 23 ;
+        lv2:index 24 ;
         lv2:name """Velocity note 8""" ;
         lv2:symbol "velocityNote8" ;
         lv2:default 100 ;
@@ -405,7 +433,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 24 ;
+        lv2:index 25 ;
         lv2:name """LFO 1 Destination""" ;
         lv2:symbol "lfo1Destination" ;
         lv2:default 0 ;
@@ -489,7 +517,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 25 ;
+        lv2:index 26 ;
         lv2:name """LFO 1 Depth""" ;
         lv2:symbol "lfo1Depth" ;
         lv2:default 0.000000 ;
@@ -498,7 +526,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 26 ;
+        lv2:index 27 ;
         lv2:name """LFO 2 Destination""" ;
         lv2:symbol "lfo2Destination" ;
         lv2:default 0 ;
@@ -582,7 +610,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 27 ;
+        lv2:index 28 ;
         lv2:name """LFO 2 Depth""" ;
         lv2:symbol "lfo2Depth" ;
         lv2:default 0.000000 ;
@@ -591,7 +619,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 28 ;
+        lv2:index 29 ;
         lv2:name """metaRecord""" ;
         lv2:symbol "metaRecord" ;
         lv2:default 0.000000 ;
@@ -603,7 +631,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 29 ;
+        lv2:index 30 ;
         lv2:name """Panic""" ;
         lv2:symbol "panic" ;
         lv2:default 0.000000 ;
@@ -616,7 +644,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 30 ;
+        lv2:index 31 ;
         lv2:name """Enabled""" ;
         lv2:symbol "enabled" ;
         lv2:default 1.000000 ;

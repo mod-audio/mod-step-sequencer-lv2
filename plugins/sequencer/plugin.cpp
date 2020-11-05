@@ -116,6 +116,30 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 				channels[12].value = 12;
 			}
 			break;
+		case paramQuantizeMode:
+			parameter.hints = kParameterIsAutomable | kParameterIsInteger;
+			parameter.name = "QuantizeMode";
+			parameter.symbol = "QuantizeMode";
+			parameter.ranges.def = 9;
+			parameter.ranges.min = 0;
+			parameter.ranges.max = 12;
+			parameter.enumValues.count = 4;
+			parameter.enumValues.restrictedMode = true;
+			{
+				ParameterEnumerationValue* const channels = new ParameterEnumerationValue[13];
+				parameter.enumValues.values = channels;
+				channels[0].label = "1 bar";
+				channels[0].value = 0;
+				channels[1].label = "1/4";
+				channels[1].value = 3;
+				channels[2].label = "1/8";
+				channels[2].value = 6;
+				channels[2].label = "1/16";
+				channels[2].value = 9;
+				channels[3].label = "1/32";
+				channels[3].value = 12;
+			}
+			break;
 		case paramNoteLength:
 			parameter.hints      = kParameterIsAutomable;
 			parameter.name       = "Note Length";
@@ -496,6 +520,8 @@ float PluginSequencer::getParameterValue(uint32_t index) const
 			return sequencer->getMode();
 		case paramDivision:
 			return sequencer->getDivision();
+		case paramQuantizeMode:
+			return sequencer->getQuantizeMode();
 		case paramNoteLength:
 			return sequencer->getNoteLength();
 		case paramOctaveSpread:
@@ -567,6 +593,9 @@ void PluginSequencer::setParameterValue(uint32_t index, float value)
 		case paramDivision:
 			sequencer->setDivision(value);
 			break;
+		case paramQuantizeMode:
+			sequencer->setQuantizeMode(value);
+            break;
 		case paramNoteLength:
 			sequencer->setNoteLength(value);
 			break;
