@@ -31,6 +31,3 @@ This step sequencer works with live MIDI input, and is created to be used withou
   example a full bar.
 * The possibility of attaching a CV LFO to the plugin and assign that to any of the
   parameters internally.
-
-
-

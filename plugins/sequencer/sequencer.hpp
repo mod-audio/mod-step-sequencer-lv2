@@ -53,7 +53,8 @@ public:
 	};
 	enum playModes {
         PLAY_MOMENTARY = 0,
-        PLAY_LATCH_TRANSPOSE
+        PLAY_LATCH_TRANSPOSE,
+        PLAY_NOTES
 	};
 	enum noteTypes {
         REST = 0,

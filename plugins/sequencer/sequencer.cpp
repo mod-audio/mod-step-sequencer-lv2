@@ -400,7 +400,6 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 						stateIndex = (stateIndex + 1) % NUM_STATES;
 					}
 
-
 					switch (mode)
 					{
 						case STATE_RECORD:
@@ -409,9 +408,9 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 							}
 							playing = false;
 							recording = true;
-							midiNotes[numActiveNotes][MIDI_NOTE] = midiNote;
+							midiNotes[numActiveNotes][MIDI_NOTE]    = midiNote;
 							midiNotes[numActiveNotes][MIDI_CHANNEL] = channel;
-							midiNotes[numActiveNotes][NOTE_TYPE] = noteMode;
+							midiNotes[numActiveNotes][NOTE_TYPE]    = noteMode;
 							numActiveNotes = (numActiveNotes + 1) % NUM_VOICES;
 							overwrite = false;
 							break;
@@ -422,8 +421,13 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 									playing = true;
 									break;
 								case PLAY_LATCH_TRANSPOSE:
+									{
 									uint8_t firstNote =  midiNotes[overwriteIndex][MIDI_NOTE];
 									transpose = midiNote - firstNote;
+									}
+									break;
+								case PLAY_NOTES:
+									midiHandler.appendMidiMessage(events[i]);
 									break;
 							}
 							overwrite = false;
@@ -433,15 +437,15 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 								overwriteIndex = 0;
 								overwrite = true;
 							}
-							midiNotes[overwriteIndex][MIDI_NOTE] = midiNote;
+							midiNotes[overwriteIndex][MIDI_NOTE]    = midiNote;
 							midiNotes[overwriteIndex][MIDI_CHANNEL] = channel;
-							midiNotes[overwriteIndex][NOTE_TYPE] = noteMode;
+							midiNotes[overwriteIndex][NOTE_TYPE]    = noteMode;
 							overwriteIndex = (overwriteIndex + 1) % numActiveNotes;
 							break;
 						case STATE_RECORD_APPEND:
-							midiNotes[numActiveNotes][MIDI_NOTE] = midiNote;
+							midiNotes[numActiveNotes][MIDI_NOTE]    = midiNote;
 							midiNotes[numActiveNotes][MIDI_CHANNEL] = channel;
-							midiNotes[overwriteIndex][NOTE_TYPE] = noteMode;
+							midiNotes[numActiveNotes][NOTE_TYPE]    = noteMode;
 							numActiveNotes = (numActiveNotes + 1) % NUM_VOICES;
 							overwrite = false;
 							break;
@@ -459,6 +463,9 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 									playing = false;
 									break;
 								case PLAY_LATCH_TRANSPOSE:
+									break;
+								case PLAY_NOTES:
+									midiHandler.appendMidiMessage(events[i]);
 									break;
 							}
 							break;
