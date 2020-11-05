@@ -67,7 +67,7 @@ public:
 	void setNotemode(int value);
 	void setMode(int value);
 	void setDivision(int value);
-	void setQuantizeMode(int value);
+	void setQuantizeMode(float value);
 	void setNoteLength(float value);
 	void setOctaveSpread(int value);
 	void setPlaymode(int value);
@@ -90,7 +90,7 @@ public:
 	int getNotemode() const;
 	int getMode() const;
 	int getDivision() const;
-	int getQuantizeMode() const;
+	float getQuantizeMode() const;
 	float getNoteLength() const;
 	int getOctaveSpread() const;
 	int getPlaymode() const;
@@ -128,7 +128,7 @@ private:
 	uint32_t* period;
 	uint32_t* clockPos;
 	int* division;
-    int  quantizeMode;
+	float quantizeMultiplier;
 
 	int notesPressed = 0;
 	int activeNotes = 0;

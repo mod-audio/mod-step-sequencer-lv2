@@ -117,7 +117,7 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			}
 			break;
 		case paramQuantizeMode:
-			parameter.hints = kParameterIsAutomable | kParameterIsInteger;
+			parameter.hints = kParameterIsAutomable;
 			parameter.name = "QuantizeMode";
 			parameter.symbol = "QuantizeMode";
 			parameter.ranges.def = 9;
@@ -129,15 +129,15 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 				ParameterEnumerationValue* const channels = new ParameterEnumerationValue[13];
 				parameter.enumValues.values = channels;
 				channels[0].label = "1 bar";
-				channels[0].value = 0;
+				channels[0].value = 4.0;
 				channels[1].label = "1/4";
-				channels[1].value = 3;
+				channels[1].value = 1.0;
 				channels[2].label = "1/8";
-				channels[2].value = 6;
+				channels[2].value = 0.5;
 				channels[2].label = "1/16";
-				channels[2].value = 9;
+				channels[2].value = 0.25;
 				channels[3].label = "1/32";
-				channels[3].value = 12;
+				channels[3].value = 0.125;
 			}
 			break;
 		case paramNoteLength:
