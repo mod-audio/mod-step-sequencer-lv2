@@ -29,7 +29,6 @@ FILES_DSP = \
 	plugin.cpp \
 	sequencer.cpp \
 	velocityLFO.cpp \
-	lfoHandler.cpp \
 	velocityhandler.cpp \
 	metaRecorder.cpp \
 	utils.cpp \

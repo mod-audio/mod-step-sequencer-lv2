@@ -103,10 +103,11 @@ void PluginClock::setSampleRate(float sampleRate)
 
 void PluginClock::setDivision(int setDivision)
 {
-	this->division = setDivision;
-	this->divisionValue = divisionValues[setDivision];
-
-	calcPeriod();
+	if (division != setDivision) {
+		this->division = setDivision;
+		this->divisionValue = divisionValues[setDivision];
+		calcPeriod();
+	}
 }
 
 void PluginClock::syncClock()

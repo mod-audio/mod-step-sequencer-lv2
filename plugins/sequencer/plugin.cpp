@@ -171,6 +171,38 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 				channels[3].value = 4;
 			}
 			break;
+		case paramMaxLength:
+			parameter.hints = kParameterIsAutomable | kParameterIsInteger;
+			parameter.name = "Max Length";
+			parameter.symbol = "maxLength";
+			parameter.ranges.def = 9;
+			parameter.ranges.min = 1;
+			parameter.ranges.max = 9;
+			parameter.enumValues.count = 9;
+			parameter.enumValues.restrictedMode = true;
+			{
+				ParameterEnumerationValue* const channels = new ParameterEnumerationValue[9];
+				parameter.enumValues.values = channels;
+				channels[0].label = "1 Note";
+				channels[0].value = 1;
+				channels[1].label = "2 Notes";
+				channels[1].value = 2;
+				channels[2].label = "3 Notes";
+				channels[2].value = 3;
+				channels[3].label = "4 Notes";
+				channels[3].value = 4;
+				channels[4].label = "5 Notes";
+				channels[4].value = 5;
+				channels[5].label = "6 Notes";
+				channels[5].value = 6;
+				channels[6].label = "7 Notes";
+				channels[6].value = 7;
+				channels[7].label = "8 Notes";
+				channels[7].value = 8;
+				channels[8].label = "9 Notes";
+				channels[8].value = 9;
+			}
+			break;
 		case paramPlaymode:
 			parameter.hints = kParameterIsAutomable | kParameterIsInteger;
 			parameter.name = "Play Mode";
@@ -519,13 +551,17 @@ float PluginSequencer::getParameterValue(uint32_t index) const
 		case paramMode:
 			return sequencer->getMode();
 		case paramDivision:
-			return sequencer->getDivision();
+			//return sequencer->getDivision();
+			return sequencer->getModulatableParameters(1);
 		case paramQuantizeMode:
 			return sequencer->getQuantizeMode();
 		case paramNoteLength:
-			return sequencer->getNoteLength();
+			//return sequencer->getNoteLength();
+			return sequencer->getModulatableParameters(2);
 		case paramOctaveSpread:
 			return sequencer->getOctaveSpread();
+		case paramMaxLength:
+			return sequencer->getMaxLength();
 		case paramPlaymode:
 			return sequencer->getPlaymode();
 		case paramSwing:
@@ -591,16 +627,21 @@ void PluginSequencer::setParameterValue(uint32_t index, float value)
 			sequencer->setMode(value);
 			break;
 		case paramDivision:
-			sequencer->setDivision(value);
+			sequencer->setModulatableParameters(value, 1);
+			//sequencer->setDivision(value);
 			break;
 		case paramQuantizeMode:
 			sequencer->setQuantizeMode(value);
             break;
 		case paramNoteLength:
-			sequencer->setNoteLength(value);
+			//sequencer->setNoteLength(value);
+			sequencer->setModulatableParameters(value, 2);
 			break;
 		case paramOctaveSpread:
 			sequencer->setOctaveSpread(value);
+			break;
+		case paramMaxLength:
+			sequencer->setMaxLength(value);
 			break;
 		case paramPlaymode:
 			sequencer->setPlaymode(value);
@@ -685,7 +726,7 @@ void PluginSequencer::activate()
     // plugin is activated
 }
 
-void PluginSequencer::run(const float**, float**, uint32_t n_frames,
+void PluginSequencer::run(const float** cvInputs, float**, uint32_t n_frames,
                               const MidiEvent* events, uint32_t eventCount)
 {
 	sequencer->emptyMidiBuffer();
@@ -695,7 +736,7 @@ void PluginSequencer::run(const float**, float**, uint32_t n_frames,
 	if (!position.bbt.valid) return;
 	sequencer->transmitHostInfo(position.playing, position.bbt.beatsPerBar, position.bbt.beat, position.bbt.barBeat, static_cast<float>(position.bbt.beatsPerMinute));
 
-	sequencer->process(events, eventCount, n_frames);
+	sequencer->process(cvInputs, events, eventCount, n_frames);
 
 	struct MidiBuffer buffer = sequencer->getMidiBuffer();
 	for (unsigned x = 0; x < buffer.numBufferedEvents + buffer.numBufferedThroughEvents; x++) {

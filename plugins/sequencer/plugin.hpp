@@ -19,6 +19,7 @@ public:
 		paramQuantizeMode,
 		paramNoteLength,
 		paramOctaveSpread,
+		paramMaxLength,
 		paramPlaymode,
 		paramSwing,
 		paramRandomizeTiming,

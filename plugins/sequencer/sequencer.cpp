@@ -32,6 +32,9 @@ Sequencer::Sequencer(double sampleRate) : velocityHandler(new VelocityHandler(st
 		noteOffBuffer[i][NOTE_TYPE] = 0;
 		noteOffBuffer[i][TIMER] = 0;
 	}
+
+	memset(modulatableParameters, 0, sizeof(modulatableParameters));
+	memset(prevParameter, 0, sizeof(prevParameter));
 }
 
 Sequencer::~Sequencer()
@@ -84,24 +87,29 @@ void Sequencer::setMode(int value)
 	}
 }
 
-void Sequencer::setDivision(int value)
-{
-	clock.setDivision(value);
-}
-
 void Sequencer::setQuantizeMode(float value)
 {
     quantizeMultiplier = value;
 }
 
+void Sequencer::setDivision(int value)
+{
+	modulatableParameters[1] = value;
+}
+
 void Sequencer::setNoteLength(float value)
 {
-	noteLength = value;
+	modulatableParameters[2] = value;
 }
 
 void Sequencer::setOctaveSpread(int value)
 {
-	octaveSpread = value;
+	modulatableParameters[3] = value;
+}
+
+void Sequencer::setMaxLength(int value)
+{
+	maxLength = value;
 }
 
 void Sequencer::setPlaymode(int value)
@@ -109,34 +117,39 @@ void Sequencer::setPlaymode(int value)
 	playMode = value;
 }
 
+void Sequencer::setModulatableParameters(float value, int index)
+{
+	modulatableParameters[index] = value;
+}
+
 void Sequencer::setSwing(float value)
 {
-	clock.setSwing(value);
+	modulatableParameters[4] = value;
 }
 
 void Sequencer::setRandomizeTiming(float value)
 {
-	clock.setRandomizeTiming(value);
+	modulatableParameters[5] = value;
 }
 
 void Sequencer::setVelocityMode(int value)
 {
-	velocityHandler->setMode(value);
+	modulatableParameters[6] = value;
 }
 
 void Sequencer::setVelocityCurve(float value)
 {
-	velocityHandler->setVelocityCurve(value);
+	modulatableParameters[7] = value;
 }
 
 void Sequencer::setCurveDepth(float value)
 {
-	velocityHandler->setCurveDepth(value);
+	modulatableParameters[8] = value;
 }
 
 void Sequencer::setCurveClip(bool value)
 {
-	velocityHandler->setCurveClip(value);
+	modulatableParameters[9] = value;
 }
 
 void Sequencer::setCurveLength(int value)
@@ -151,7 +164,7 @@ void Sequencer::setPatternlength(int value)
 
 void Sequencer::setVelocityNote(int index, int value)
 {
-	velocityHandler->setVelocityPattern(index, (uint8_t)value);
+	modulatableParameters[index + 10] = value;
 }
 
 void Sequencer::setConnectLfo1(int value)
@@ -161,7 +174,7 @@ void Sequencer::setConnectLfo1(int value)
 
 void Sequencer::setLFO1depth(float value)
 {
-	lFO1depth = value;
+	lfo1Depth = value;
 }
 
 void Sequencer::setConnectLfo2(int value)
@@ -171,7 +184,7 @@ void Sequencer::setConnectLfo2(int value)
 
 void Sequencer::setLFO2depth(float value)
 {
-	lFO2depth = value;
+	lfo2Depth = value;
 }
 
 void Sequencer::setMetaRecord(bool value)
@@ -187,6 +200,60 @@ void Sequencer::setPanic(bool value)
 void Sequencer::setEnabled(bool value)
 {
 	sequencerEnabled = value;
+}
+
+
+float Sequencer::applyRange(float numberToCheck, float min, float max)
+{
+    if (numberToCheck < min)
+        return min;
+    else if (numberToCheck > max)
+        return max;
+    else
+        return numberToCheck;
+}
+
+void Sequencer::setParameters()
+{
+	for (unsigned p = 1; p < 18; p++) {
+		variables[p] = getModulatableParameters(p);
+	}
+
+    int param = connectLfo1;
+    if (param > 0) {
+        float lfoValue   = maxParamValue[param] * lfo1Depth * (lfo1Value * 0.1);
+        variables[param] = variables[param] + lfoValue;
+        variables[param] = applyRange(variables[param], minParamValue[param], maxParamValue[param]);
+    }
+    param = connectLfo1;
+    if (param > 0) {
+        float lfoValue   = maxParamValue[param] * lfo2Depth * (lfo2Value * 0.1);
+        variables[param] = variables[param] + lfoValue;
+        variables[param] = applyRange(variables[param], minParamValue[param], maxParamValue[param]);
+    }
+
+    clock.setDivision((int)variables[1]);
+    noteLength   = variables[2];
+    octaveSpread = variables[3];
+    clock.setSwing(variables[4]);
+    clock.setRandomizeTiming(variables[5]);
+    velocityHandler->setMode((int)variables[6]);
+	velocityHandler->setVelocityCurve(variables[7]);
+    velocityHandler->setCurveDepth(variables[8]);
+	velocityHandler->setCurveClip((bool)variables[9]);
+	velocityHandler->setVelocityPattern(0, (uint8_t)variables[10]);
+	velocityHandler->setVelocityPattern(1, (uint8_t)variables[11]);
+	velocityHandler->setVelocityPattern(2, (uint8_t)variables[12]);
+	velocityHandler->setVelocityPattern(3, (uint8_t)variables[13]);
+	velocityHandler->setVelocityPattern(4, (uint8_t)variables[14]);
+	velocityHandler->setVelocityPattern(5, (uint8_t)variables[15]);
+	velocityHandler->setVelocityPattern(6, (uint8_t)variables[16]);
+	velocityHandler->setVelocityPattern(7, (uint8_t)variables[17]);
+}
+
+float Sequencer::getModulatableParameters(int index) const
+{
+	return modulatableParameters[index];
 }
 
 int Sequencer::getNotemode() const
@@ -217,6 +284,11 @@ float Sequencer::getNoteLength() const
 int Sequencer::getOctaveSpread() const
 {
 	return octaveSpread;
+}
+
+int Sequencer::getMaxLength() const
+{
+	return maxLength;
 }
 
 int Sequencer::getPlaymode() const
@@ -276,7 +348,7 @@ int Sequencer::getConnectLfo1() const
 
 float Sequencer::getLFO1depth() const
 {
-	return lFO1depth;
+	return lfo1Depth;
 }
 
 int Sequencer::getConnectLfo2() const
@@ -286,7 +358,7 @@ int Sequencer::getConnectLfo2() const
 
 float Sequencer::getLFO2depth() const
 {
-	return lFO2depth;
+	return lfo2Depth;
 }
 
 bool Sequencer::getMetaRecord() const
@@ -363,10 +435,15 @@ struct MidiBuffer Sequencer::getMidiBuffer()
 	return midiHandler.getMidiBuffer();
 }
 
-void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n_frames)
+void Sequencer::process(const float **cvInputs, const MidiEvent* events, uint32_t eventCount, uint32_t n_frames)
 {
     struct MidiEvent midiEvent;
     struct MidiEvent midiThroughEvent;
+
+	lfo1Value = cvInputs[0][0];
+	lfo2Value = cvInputs[1][0];
+
+	setParameters();
 
 	if (panic) {
 		reset();
@@ -569,7 +646,9 @@ void Sequencer::process(const MidiEvent* events, uint32_t eventCount, uint32_t n
 						activeNotesIndex = (activeNotesIndex + 1) % NUM_NOTE_OFF_SLOTS;
 					}
 				}
-				notePlayed = (notePlayed + 1) % numActiveNotes;
+				int sequenceLength = (maxLength == 9) ? numActiveNotes : maxLength;
+				sequenceLength = (sequenceLength > numActiveNotes) ? numActiveNotes : sequenceLength;
+				notePlayed = (notePlayed + 1) % sequenceLength;
 				velocityHandler->goToNextStep();
 			}
 		}

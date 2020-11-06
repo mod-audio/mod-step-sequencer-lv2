@@ -71,7 +71,9 @@ public:
 	void setQuantizeMode(float value);
 	void setNoteLength(float value);
 	void setOctaveSpread(int value);
+	void setMaxLength(int value);
 	void setPlaymode(int value);
+	void setModulatableParameters(const float value, int index);
 	void setSwing(float value);
 	void setRandomizeTiming(float value);
 	void setVelocityMode(int value);
@@ -88,12 +90,16 @@ public:
 	void setMetaRecord(bool value);
 	void setPanic(bool value);
 	void setEnabled(bool value);
+	float applyRange(float numberToCheck, float min, float max);
+	void setParameters();
+	float getModulatableParameters(int index) const;
 	int getNotemode() const;
 	int getMode() const;
 	int getDivision() const;
 	float getQuantizeMode() const;
 	float getNoteLength() const;
 	int getOctaveSpread() const;
+	int getMaxLength() const;
 	int getPlaymode() const;
 	float getSwing() const;
 	float getRandomizeTiming() const;
@@ -118,9 +124,8 @@ public:
 	void clear();
 	void emptyMidiBuffer();
 	struct MidiBuffer getMidiBuffer();
-	void process(const MidiEvent* event, uint32_t eventCount, uint32_t n_frames);
+	void process(const float **cvInputs, const MidiEvent* event, uint32_t eventCount, uint32_t n_frames);
 private:
-	
 	struct PrevState {
 		uint8_t midiNotes[NUM_STATES][NUM_VOICES][3];
 		int numAcitveNotes;
@@ -179,20 +184,29 @@ private:
 	int randomizeTiming = 0;
 	int velocityMode = 0;
 	int velocityCurve = 0;
+	int maxLength = 9;
 	float curveDepth = 0.0;
 	int curveClip = 0;
 	int curveLength = 1;
 	int patternlength = 1;
 	int velocityNote[8];
 	int connectLfo1 = 0;
-	int lFO1depth = 0;
+	int lfo1Depth = 0;
 	int connectLfo2 = 0;
-	int lFO2depth = 0;
+	int lfo2Depth = 0;
 	bool sequencerEnabled = true;
 	bool panic = false;
+	float modulatableParameters[18];
+	float variables[18];
+	float prevParameter[18];
+	float lfo1Value = 0.0;
+	float lfo2Value = 0.0;
 
 	bool recording = false;
 	bool playing = false;
+
+    float minParamValue[18] = {0, 0, 0, 1, 25, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0};
+    float maxParamValue[18] = {0, 10, 0.99, 4, 75, 1, 2, 70, 1, 0, 127, 127, 127, 127, 127, 127, 127, 127};
 
 	PrevState prevState;
 	SeqUtils utils;
