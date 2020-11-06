@@ -29,5 +29,3 @@ This step sequencer works with live MIDI input, and is created to be used withou
 * Que events based on division. For example, it would be useful when doing a "meta"
   recording that it would round everything that is played to a certain length for
   example a full bar.
-* The possibility of attaching a CV LFO to the plugin and assign that to any of the
-  parameters internally.
