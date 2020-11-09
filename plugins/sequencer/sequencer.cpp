@@ -189,7 +189,17 @@ void Sequencer::setLFO2depth(float value)
 
 void Sequencer::setMetaRecord(bool value)
 {
-	metaRecorder->setRecordingMode(value);
+	metaRecordingEnabled = value;
+}
+
+void Sequencer::setMetaMode(int value)
+{
+	metaRecordMode = value;
+}
+
+void Sequencer::setMetaQuantizeValue(int value)
+{
+	metaQuantizeValue = value;
 }
 
 void Sequencer::setPanic(bool value)
@@ -366,6 +376,16 @@ bool Sequencer::getMetaRecord() const
 	return metaRecorder->getRecordingMode();
 }
 
+int Sequencer::getMetaMode() const
+{
+	return metaRecordMode;
+}
+
+int Sequencer::getMetaQuantizeValue() const
+{
+	return metaQuantizeValue;
+}
+
 bool Sequencer::getPanic() const
 {
 	return panic;
@@ -445,6 +465,12 @@ void Sequencer::process(const float **cvInputs, const MidiEvent* events, uint32_
 
 	setParameters();
 
+	if (metaRecordingEnabled && (metaRecordMode == START_RECORDING_WHEN_ENABLED)) {
+		metaRecording = true;
+	} else if (!metaRecordingEnabled) {
+		metaRecording = false;
+	}
+
 	if (panic) {
 		reset();
 		panic = false;
@@ -466,6 +492,9 @@ void Sequencer::process(const float **cvInputs, const MidiEvent* events, uint32_
 			switch(status) {
 				case MIDI_NOTEON:
 					//store previous state
+					if (metaRecordingEnabled && (metaRecordMode ==  START_RECORDING_NOTE_ON)) {
+						metaRecording = true;
+					}
 					if (numActiveNotes > 0) {
 						//added new state
 						for (int p = 0; p < numActiveNotes; p++) {
@@ -569,6 +598,8 @@ void Sequencer::process(const float **cvInputs, const MidiEvent* events, uint32_
 			midiHandler.appendMidiThroughMessage(events[i]);
 		}
 	}
+
+	metaRecorder->setRecordingMode(metaRecording);
 
 	int patternSize = 1;
 

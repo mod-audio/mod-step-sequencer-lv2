@@ -63,7 +63,7 @@ void MetaRecorder::record(uint8_t midiNote, uint8_t channel, uint8_t noteType)
 	preRecordMidiBuffer[MIDI_CHANNEL] = channel;
 	preRecordMidiBuffer[NOTE_TYPE]    = noteType;
 
-	if (recMode != prevRecMode && (recIndex % 2 == 0))
+	if (recMode != prevRecMode && ((recIndex % 4 == 0) || (prevRecMode && (recIndex % 4 == 1) && (*clockPos < (*period * 0.5)))))
 	{
 		switch (recMode)
 		{

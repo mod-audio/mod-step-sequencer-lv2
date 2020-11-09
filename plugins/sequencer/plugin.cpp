@@ -120,13 +120,13 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			parameter.hints = kParameterIsAutomable;
 			parameter.name = "QuantizeMode";
 			parameter.symbol = "QuantizeMode";
-			parameter.ranges.def = 9;
-			parameter.ranges.min = 0;
-			parameter.ranges.max = 12;
+			parameter.ranges.def = 1.0;
+			parameter.ranges.min = 0.125;
+			parameter.ranges.max = 4;
 			parameter.enumValues.count = 4;
 			parameter.enumValues.restrictedMode = true;
 			{
-				ParameterEnumerationValue* const channels = new ParameterEnumerationValue[13];
+				ParameterEnumerationValue* const channels = new ParameterEnumerationValue[4];
 				parameter.enumValues.values = channels;
 				channels[0].label = "1 bar";
 				channels[0].value = 4.0;
@@ -505,6 +505,46 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			parameter.ranges.min = 0;
 			parameter.ranges.max = 1;
 			break;
+		case paramMetaMode:
+			parameter.hints = kParameterIsAutomable | kParameterIsInteger;
+			parameter.name = "Meta Mode";
+			parameter.symbol = "metaMode";
+			parameter.ranges.def = 0;
+			parameter.ranges.min = 0;
+			parameter.ranges.max = 1;
+			parameter.enumValues.count = 2;
+			parameter.enumValues.restrictedMode = true;
+			{
+				ParameterEnumerationValue* const channels = new ParameterEnumerationValue[2];
+				parameter.enumValues.values = channels;
+				channels[0].label = "Start recording when note pressed";
+				channels[0].value = 0;
+				channels[1].label = "Start recording when enabled";
+				channels[1].value = 1;
+			}
+			break;
+		case paramMetaQuantizeValue:
+			parameter.hints = kParameterIsAutomable;
+			parameter.name = "Meta QuantizeValue";
+			parameter.symbol = "QuantizeMode";
+			parameter.ranges.def = 0.5;
+			parameter.ranges.min = 0;
+			parameter.ranges.max = 1.0;
+			parameter.enumValues.count = 3;
+			parameter.enumValues.restrictedMode = true;
+			{
+				ParameterEnumerationValue* const channels = new ParameterEnumerationValue[3];
+				parameter.enumValues.values = channels;
+				channels[0].label = "1/4";
+				channels[0].value = 1.0;
+				channels[1].label = "1/8";
+				channels[1].value = 0.5;
+				channels[1].label = "1/16";
+				channels[1].value = 0.25;
+				channels[2].label = "1/32";
+				channels[2].value = 0.125;
+			}
+			break;
 		case paramPanic:
 			parameter.hints      = kParameterIsBoolean | kParameterIsTrigger;
 			parameter.name       = "Panic";
@@ -606,6 +646,10 @@ float PluginSequencer::getParameterValue(uint32_t index) const
 			return sequencer->getLFO2depth();
 		case paramMetaRecord:
 			return sequencer->getMetaRecord();
+		case paramMetaMode:
+			return sequencer->getMetaMode();
+		case paramMetaQuantizeValue:
+			return sequencer->getMetaQuantizeValue();
 		case paramPanic:
 			return sequencer->getPanic();
 		case paramEnabled:
@@ -708,6 +752,12 @@ void PluginSequencer::setParameterValue(uint32_t index, float value)
 			break;
 		case paramMetaRecord:
 			sequencer->setMetaRecord(value);
+			break;
+		case paramMetaMode:
+			sequencer->setMetaMode(value);
+			break;
+		case paramMetaQuantizeValue:
+			sequencer->setMetaQuantizeValue(value);
 			break;
 		case paramPanic:
 			sequencer->setPanic(value);

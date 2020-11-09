@@ -59,7 +59,11 @@ public:
 	enum noteTypes {
         REST = 0,
         NOTE,
-        TIE,
+        TIE
+	};
+	enum metaMode {
+        START_RECORDING_NOTE_ON = 0,
+        START_RECORDING_WHEN_ENABLED
 	};
 	Sequencer(double sampleRate);
 	~Sequencer();
@@ -88,6 +92,8 @@ public:
 	void setConnectLfo2(int value);
 	void setLFO2depth(float value);
 	void setMetaRecord(bool value);
+	void setMetaMode(int value);
+	void setMetaQuantizeValue(int value);
 	void setPanic(bool value);
 	void setEnabled(bool value);
 	float applyRange(float numberToCheck, float min, float max);
@@ -115,6 +121,8 @@ public:
 	int getConnectLfo2() const;
 	float getLFO2depth() const;
 	bool getMetaRecord() const;
+	int  getMetaMode() const;
+	int  getMetaQuantizeValue() const;
 	bool getPanic() const;
 	bool getEnabled() const;
 
@@ -161,6 +169,8 @@ private:
 	float barBeat;
 	float sampleRate = 48000;
 
+	bool metaRecordingEnabled = false;
+	bool metaRecording = false;
 	bool pluginEnabled = true;
 	bool first = false;
 	bool SeqEnabled = true;
@@ -174,6 +184,8 @@ private:
 	bool midiNotesCopied = false;
 	bool overwrite = false;
 
+	int metaRecordMode = 0;
+	int metaQuantizeValue = 0;
 	int overwriteIndex = 0;
 	int noteMode = 0;
 	int mode = 0;
