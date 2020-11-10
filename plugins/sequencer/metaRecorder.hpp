@@ -18,7 +18,7 @@ public:
 	MetaRecorder();
 	~MetaRecorder();
 	bool recordingQued();
-	uint8_t getMidiBuffer(int index, int noteType);
+	uint8_t getRecordedTranspose(int index);
 	int getRecLength();
 	int getRecordingMode() const;
 	void setQue(bool recQued);
@@ -26,7 +26,7 @@ public:
 	void clearRecording();
 	void calculateQuantizeCoef();
 	void setRecordingMode(int mode);
-	void record(uint8_t midiNote, uint8_t channel, uint8_t noteType);
+	void record(uint8_t transpose);
 private:
 	enum MetaRecModes {
 		STOP_RECORDING = 0,
@@ -41,9 +41,8 @@ private:
 	int prevRecMode = 0;
 	int recLength;
 	int recIndex = 0;
-	uint8_t preRecordMidiBuffer[NOTE_TYPE + 1];
-	uint8_t midiBuffer[BUFFER_LENGTH][NOTE_TYPE + 1];
-
+	uint8_t transpose = 0;
+	uint8_t recordedTranspose[BUFFER_LENGTH];
 
 	int *division;
 	uint32_t *clockPos;

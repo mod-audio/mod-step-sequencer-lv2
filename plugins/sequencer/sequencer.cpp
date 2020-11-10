@@ -626,13 +626,11 @@ void Sequencer::process(const float **cvInputs, const MidiEvent* events, uint32_
 	if (metaRecorder->recordingQued()) {
 
 		for (int e = 0; e < metaRecorder->getRecLength(); e++) {
-			midiNotes[e][MIDI_NOTE] = metaRecorder->getMidiBuffer(e, MIDI_NOTE);
-			midiNotes[e][MIDI_CHANNEL] = metaRecorder->getMidiBuffer(e, MIDI_CHANNEL);
-			midiNotes[e][NOTE_TYPE] = metaRecorder->getMidiBuffer(e, NOTE_TYPE);
+			transposeRecording[e] = metaRecorder->getRecordedTranspose(e);
 		}
 		notePlayed = 0;
 		transpose = 0;
-		numActiveNotes = metaRecorder->getRecLength();
+		transposeRecLength = metaRecorder->getRecLength();
 		metaRecorder->setQue(false);
 	}
 
@@ -656,12 +654,19 @@ void Sequencer::process(const float **cvInputs, const MidiEvent* events, uint32_
 
 					if (sequencerEnabled) {
 
+						if (transposeRecLength > 0) {
+							metaTranspose = transposeRecording[transposeIndex];
+							transposeIndex = (transposeIndex + 1) % transposeRecLength;
+						} else {
+							metaTranspose = 0;
+						}
+
 						uint8_t octave = octavePattern[octaveMode]->getStep() * 12;
 						octavePattern[octaveMode]->goToNextStep();
 
-						midiNote = midiNote + octave + transpose;
+						midiNote = midiNote + octave + transpose + metaTranspose;
 
-						metaRecorder->record(midiNote, channel, noteType);
+						metaRecorder->record(transpose);
 
 						midiEvent.frame = s;
 						midiEvent.size = 3;

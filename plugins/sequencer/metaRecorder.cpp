@@ -25,9 +25,9 @@ int MetaRecorder::getRecordingMode() const
 	return recMode;
 }
 
-uint8_t MetaRecorder::getMidiBuffer(int index, int noteType)
+uint8_t MetaRecorder::getRecordedTranspose(int index)
 {
-	return midiBuffer[index][noteType];
+	return recordedTranspose[index];
 }
 
 void MetaRecorder::setQue(bool recQued)
@@ -56,13 +56,9 @@ void MetaRecorder::setRecordingMode(int recMode)
 	this->recMode = recMode;
 }
 
-void MetaRecorder::record(uint8_t midiNote, uint8_t channel, uint8_t noteType)
+
+void MetaRecorder::record(uint8_t transpose)
 {
-
-	preRecordMidiBuffer[MIDI_NOTE]    = midiNote;
-	preRecordMidiBuffer[MIDI_CHANNEL] = channel;
-	preRecordMidiBuffer[NOTE_TYPE]    = noteType;
-
 	if (recMode != prevRecMode && ((recIndex % 4 == 0) || (prevRecMode && (recIndex % 4 == 1) && (*clockPos < (*period * 0.5)))))
 	{
 		switch (recMode)
@@ -79,9 +75,7 @@ void MetaRecorder::record(uint8_t midiNote, uint8_t channel, uint8_t noteType)
 			case START_RECORDING:
 				recording = true;
 				if (*clockPos < *period - (*period * coef)) {
-					midiBuffer[recIndex][MIDI_NOTE]    = preRecordMidiBuffer[MIDI_NOTE];
-					midiBuffer[recIndex][MIDI_CHANNEL] = preRecordMidiBuffer[MIDI_CHANNEL];
-					midiBuffer[recIndex][NOTE_TYPE]    = preRecordMidiBuffer[NOTE_TYPE];
+					recordedTranspose[recIndex] = transpose;
 					recIndex = (recIndex + 1) % BUFFER_LENGTH;
 				}
 				break;
@@ -90,10 +84,7 @@ void MetaRecorder::record(uint8_t midiNote, uint8_t channel, uint8_t noteType)
 	}
 
 	if (recording) {
-		midiBuffer[recIndex][MIDI_NOTE]    = midiNote;
-		midiBuffer[recIndex][MIDI_CHANNEL] = channel;
-		midiBuffer[recIndex][NOTE_TYPE]    = noteType;
-
+		recordedTranspose[recIndex] = transpose;
 		recIndex = (recIndex + 1) % BUFFER_LENGTH;
 	}
 }
