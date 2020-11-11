@@ -11,6 +11,7 @@
 
 
 #define BUFFER_LENGTH 2048 //TODO choose default
+#define NUM_TAKES 20
 
 class MetaRecorder {
 public:
@@ -18,12 +19,14 @@ public:
 	MetaRecorder();
 	~MetaRecorder();
 	bool recordingQued();
-	uint8_t getRecordedTranspose(int index);
-	int getRecLength();
+	uint8_t getRecordedTranspose(int take, int index);
+	int getRecLength(int take);
+	int getNumTakes();
 	int getRecordingMode() const;
 	void setQue(bool recQued);
 	void setBeatPos(float beatPos);
 	void clearRecording();
+	void clearAll();
 	void calculateQuantizeCoef();
 	void setRecordingMode(int mode);
 	void record(uint8_t transpose);
@@ -39,10 +42,11 @@ private:
 	bool recQued = false;
 	int recMode = 0;
 	int prevRecMode = 0;
-	int recLength;
+	int recLength[NUM_TAKES];
 	int recIndex = 0;
+	int take;
 	uint8_t transpose = 0;
-	uint8_t recordedTranspose[BUFFER_LENGTH];
+	uint8_t recordedTranspose[NUM_TAKES][BUFFER_LENGTH];
 
 	int *division;
 	uint32_t *clockPos;

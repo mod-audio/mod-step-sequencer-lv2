@@ -439,8 +439,10 @@ void Sequencer::clear() //TODO reset?
 {
 	numActiveNotes = 0;
 	notePlayed = 0;
-	transposeRecLength = 0;
-	transposeIndex = 0;
+
+	memset(transposeRecLength, 0, sizeof(transposeRecLength));
+	memset(transposeIndex, 0, sizeof(transposeIndex));
+
 	for (unsigned i = 0; i < NUM_VOICES; i++) {
 		midiNotes[i][MIDI_NOTE] = EMPTY_SLOT;
 		midiNotes[i][MIDI_CHANNEL] = 0;
@@ -641,13 +643,15 @@ void Sequencer::process(const float **cvInputs, const MidiEvent* events, uint32_
 				{
 
 					if (metaRecorder->recordingQued()) {
-						for (int e = 0; e < metaRecorder->getRecLength(); e++) {
-							transposeRecording[e] = metaRecorder->getRecordedTranspose(e);
-						}
+						for (int t = 0; t < metaRecorder->getNumTakes(); t++) {
+							for (int e = 0; e < metaRecorder->getRecLength(t); e++) {
+								transposeRecording[t][e] = metaRecorder->getRecordedTranspose(t, e);
+							}
 						transpose = 0;
-						transposeRecLength = metaRecorder->getRecLength();
-						transposeIndex = notePlayed % transposeRecLength;
+						transposeRecLength[t] = metaRecorder->getRecLength(t);
+						transposeIndex[t] = notePlayed % transposeRecLength[t];
 						metaRecorder->setQue(false);
+						}
 					}
 
 					//create MIDI note on message
@@ -657,11 +661,12 @@ void Sequencer::process(const float **cvInputs, const MidiEvent* events, uint32_
 
 					if (sequencerEnabled) {
 
-						if (transposeRecLength > 0) {
-							metaTranspose = transposeRecording[transposeIndex];
-							transposeIndex = (transposeIndex + 1) % transposeRecLength;
-						} else {
-							metaTranspose = 0;
+						metaTranspose = 0;
+						for (unsigned t = 0; t < (unsigned)metaRecorder->getNumTakes(); t++) {
+							if (transposeRecLength[t] > 0) { //TODO can remove this?
+								metaTranspose += transposeRecording[t][transposeIndex[t]];
+								transposeIndex[t] = (transposeIndex[t] + 1) % transposeRecLength[t];
+							}
 						}
 
 						uint8_t octave = octavePattern[octaveMode]->getStep() * 12;

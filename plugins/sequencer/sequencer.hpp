@@ -149,10 +149,10 @@ private:
 	int notePlayed = 0;
 	int octaveMode = 0;
 
-	int transposeIndex = 0;
-	int transposeRecLength = 0;
+	int transposeIndex[NUM_TAKES];
+	int transposeRecLength[NUM_TAKES];
     uint8_t metaTranspose = 0;
-    uint8_t transposeRecording[NUM_VOICES];
+    uint8_t transposeRecording[NUM_TAKES][NUM_VOICES];
     uint8_t midiNotes[NUM_VOICES][3];
     uint8_t midiNotesBypassed[NUM_VOICES];
     uint32_t noteOffBuffer[NUM_NOTE_OFF_SLOTS][4];

@@ -4,11 +4,13 @@
 MetaRecorder::MetaRecorder(uint32_t *period, uint32_t *clockPos, int *division) :
 beatPos(0.0),
 recMode(0),
-recLength(0)
+take(0)
 {
 	this->period   = period;
 	this->clockPos = clockPos;
 	this->division = division;
+
+	memset(recLength, 0, sizeof(recLength));
 }
 
 MetaRecorder::~MetaRecorder()
@@ -25,9 +27,9 @@ int MetaRecorder::getRecordingMode() const
 	return recMode;
 }
 
-uint8_t MetaRecorder::getRecordedTranspose(int index)
+uint8_t MetaRecorder::getRecordedTranspose(int take, int index)
 {
-	return recordedTranspose[index];
+	return recordedTranspose[take][index];
 }
 
 void MetaRecorder::setQue(bool recQued)
@@ -35,9 +37,14 @@ void MetaRecorder::setQue(bool recQued)
 	this->recQued = recQued;
 }
 
-int MetaRecorder::getRecLength()
+int MetaRecorder::getRecLength(int take)
 {
-	return recLength;
+	return recLength[take];
+}
+
+int MetaRecorder::getNumTakes()
+{
+	return take;
 }
 
 void MetaRecorder::calculateQuantizeCoef()
@@ -48,7 +55,13 @@ void MetaRecorder::calculateQuantizeCoef()
 void MetaRecorder::clearRecording()
 {
 	recIndex = 0;
-	recLength = 0;
+	memset(recLength, 0, sizeof(recLength));
+}
+
+void MetaRecorder::clearAll()
+{
+	clearRecording();
+	take = 0;
 }
 
 void MetaRecorder::setRecordingMode(int recMode)
@@ -66,16 +79,17 @@ void MetaRecorder::record(uint8_t transpose)
 			case STOP_RECORDING:
 				if (recording && recIndex > 0)
 				{
-					recLength = recIndex;
+					recLength[take] = recIndex;
 					recQued = true;
 					recording = false;
 					recIndex = 0;
+					take = (take + 1) % NUM_TAKES;
 				}
 				break;
 			case START_RECORDING:
 				recording = true;
 				if (*clockPos < *period - (*period * coef)) {
-					recordedTranspose[recIndex] = transpose;
+					recordedTranspose[take][recIndex] = transpose;
 					recIndex = (recIndex + 1) % BUFFER_LENGTH;
 				}
 				break;
@@ -84,7 +98,7 @@ void MetaRecorder::record(uint8_t transpose)
 	}
 
 	if (recording) {
-		recordedTranspose[recIndex] = transpose;
+		recordedTranspose[take][recIndex] = transpose;
 		recIndex = (recIndex + 1) % BUFFER_LENGTH;
 	}
 }
