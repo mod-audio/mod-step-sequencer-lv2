@@ -439,6 +439,8 @@ void Sequencer::clear() //TODO reset?
 {
 	numActiveNotes = 0;
 	notePlayed = 0;
+	transposeRecLength = 0;
+	transposeIndex = 0;
 	for (unsigned i = 0; i < NUM_VOICES; i++) {
 		midiNotes[i][MIDI_NOTE] = EMPTY_SLOT;
 		midiNotes[i][MIDI_CHANNEL] = 0;
@@ -623,16 +625,6 @@ void Sequencer::process(const float **cvInputs, const MidiEvent* events, uint32_
 		}
     }
 
-	if (metaRecorder->recordingQued()) {
-
-		for (int e = 0; e < metaRecorder->getRecLength(); e++) {
-			transposeRecording[e] = metaRecorder->getRecordedTranspose(e);
-		}
-		notePlayed = 0;
-		transpose = 0;
-		transposeRecLength = metaRecorder->getRecLength();
-		metaRecorder->setQue(false);
-	}
 
 	for (unsigned s = 0; s < n_frames; s++) {
 
@@ -647,6 +639,17 @@ void Sequencer::process(const float **cvInputs, const MidiEvent* events, uint32_
 						&& midiNotes[notePlayed][MIDI_NOTE] < 128
 						&& midiNotes[notePlayed][NOTE_TYPE] > 0)
 				{
+
+					if (metaRecorder->recordingQued()) {
+						for (int e = 0; e < metaRecorder->getRecLength(); e++) {
+							transposeRecording[e] = metaRecorder->getRecordedTranspose(e);
+						}
+						transpose = 0;
+						transposeRecLength = metaRecorder->getRecLength();
+						transposeIndex = notePlayed % transposeRecLength;
+						metaRecorder->setQue(false);
+					}
+
 					//create MIDI note on message
 					uint8_t midiNote = midiNotes[notePlayed][MIDI_NOTE];
 					uint8_t channel = midiNotes[notePlayed][MIDI_CHANNEL];
