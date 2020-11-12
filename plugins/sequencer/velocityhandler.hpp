@@ -20,6 +20,7 @@ public:
 	void  setCurveDepth(float value);
 	void  setCurveClip(bool value);
 	void  setCurveLength(int value);
+	void  setCurveFrequency(float value);
 	float getVelocityCurve();
 	float getCurveDepth();
 	bool  getCurveClip();

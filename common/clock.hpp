@@ -38,6 +38,7 @@ public:
 	float    getSampleRate() const;
 	int      getSyncMode() const;
 	float    getInternalBpmValue() const;
+	float    getFrequency();
 	int      *getDivision();
 	uint32_t *getPeriod();
 	uint32_t *getPos();
@@ -77,6 +78,7 @@ private:
 
 	float hostBarBeat;
 	float beatTick;
+	float frequency;
 	int syncMode;
 	int previousSyncMode;
 	int hostTick;

@@ -33,6 +33,12 @@ void VelocityHandler::setCurveLength(int value)
 	lfo->setCurveLength(value);
 }
 
+void VelocityHandler::setCurveFrequency(float value)
+{
+	lfo->setFrequency(value);
+}
+
+
 void VelocityHandler::setSampleRate(float sampleRate)
 {
 	this->sampleRate = sampleRate;

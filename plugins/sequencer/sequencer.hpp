@@ -65,74 +65,80 @@ public:
         START_RECORDING_NOTE_ON = 0,
         START_RECORDING_WHEN_ENABLED
 	};
+	enum metaSpeed {
+        HALF_TIME = 0,
+        NORMAL_SPEED,
+        DOUBLE_TIME
+	};
 	Sequencer(double sampleRate);
 	~Sequencer();
 
-	void setSampleRate(float sampleRate);
-	void setNotemode(int value);
-	void setMode(int value);
-	void setDivision(int value);
-	void setQuantizeMode(float value);
-	void setNoteLength(float value);
-	void setOctaveSpread(int value);
-	void setMaxLength(int value);
-	void setPlaymode(int value);
-	void setModulatableParameters(const float value, int index);
-	void setSwing(float value);
-	void setRandomizeTiming(float value);
-	void setVelocityMode(int value);
-	void setVelocityCurve(float value);
-	void setCurveDepth(float value);
-	void setCurveClip(bool value);
-	void setCurveLength(int value);
-	void setPatternlength(int value);
-	void setVelocityNote(int index, int value);
-	void setConnectLfo1(int value);
-	void setLFO1depth(float value);
-	void setConnectLfo2(int value);
-	void setLFO2depth(float value);
-	void setMetaRecord(bool value);
-	void setMetaMode(int value);
-	void setMetaQuantizeValue(int value);
-	void setPanic(bool value);
-	void setEnabled(bool value);
+	void  setSampleRate(float sampleRate);
+	void  setNotemode(int value);
+	void  setMode(int value);
+	void  setDivision(int value);
+	void  setQuantizeMode(float value);
+	void  setNoteLength(float value);
+	void  setOctaveSpread(int value);
+	void  setMaxLength(int value);
+	void  setPlaymode(int value);
+	void  setModulatableParameters(const float value, int index);
+	void  setSwing(float value);
+	void  setRandomizeTiming(float value);
+	void  setVelocityMode(int value);
+	void  setVelocityCurve(float value);
+	void  setCurveDepth(float value);
+	void  setCurveClip(bool value);
+	void  setCurveLength(int value);
+	void  setPatternlength(int value);
+	void  setVelocityNote(int index, int value);
+	void  setConnectLfo1(int value);
+	void  setLFO1depth(float value);
+	void  setConnectLfo2(int value);
+	void  setLFO2depth(float value);
+	void  setMetaRecord(bool value);
+	void  setMetaMode(int value);
+	void  setMetaQuantizeValue(int value);
+	void  setMetaSpeed(int value);
+	void  setPanic(bool value);
+	void  setEnabled(bool value);
 	float applyRange(float numberToCheck, float min, float max);
-	void setParameters();
+	void  setParameters();
 	float getModulatableParameters(int index) const;
-	int getNotemode() const;
-	int getMode() const;
-	int getDivision() const;
+	int   getNotemode() const;
+	int   getMode() const;
+	int   getDivision() const;
 	float getQuantizeMode() const;
 	float getNoteLength() const;
-	int getOctaveSpread() const;
-	int getMaxLength() const;
-	int getPlaymode() const;
+	int   getOctaveSpread() const;
+	int   getMaxLength() const;
+	int   getPlaymode() const;
 	float getSwing() const;
 	float getRandomizeTiming() const;
-	int getVelocityMode() const;
+	int   getVelocityMode() const;
 	float getVelocityCurve() const;
 	float getCurveDepth() const;
-	bool getCurveClip() const;
-	int getCurveLength() const;
-	int getPatternlength() const;
-	int getVelocityNote(int index) const;
-	int getConnectLfo1() const;
+	bool  getCurveClip() const;
+	int   getCurveLength() const;
+	int   getPatternlength() const;
+	int   getVelocityNote(int index) const;
+	int   getConnectLfo1() const;
 	float getLFO1depth() const;
-	int getConnectLfo2() const;
+	int   getConnectLfo2() const;
 	float getLFO2depth() const;
-	bool getMetaRecord() const;
-	int  getMetaMode() const;
-	int  getMetaQuantizeValue() const;
-	bool getPanic() const;
-	bool getEnabled() const;
-
-	void transmitHostInfo(const bool playing, const float beatsPerBar,
+	bool  getMetaRecord() const;
+	int   getMetaMode() const;
+	int   getMetaQuantizeValue() const;
+	int   getMetaSpeed() const;
+	bool  getPanic() const;
+	bool  getEnabled() const;
+	void  transmitHostInfo(const bool playing, const float beatsPerBar,
 	const int beat, const float barBeat, const double bpm);
-	void reset();
-	void clear();
-	void emptyMidiBuffer();
+	void  reset();
+	void  clear();
+	void  emptyMidiBuffer();
+	void  process(const float **cvInputs, const MidiEvent* event, uint32_t eventCount, uint32_t n_frames);
 	struct MidiBuffer getMidiBuffer();
-	void process(const float **cvInputs, const MidiEvent* event, uint32_t eventCount, uint32_t n_frames);
 private:
 	struct PrevState {
 		uint8_t midiNotes[NUM_STATES][NUM_VOICES][3];
@@ -173,6 +179,7 @@ private:
 	float barBeat;
 	float sampleRate = 48000;
 
+	int metaSpeed = 1;
 	bool metaRecordingEnabled = false;
 	bool metaRecording = false;
 	bool pluginEnabled = true;

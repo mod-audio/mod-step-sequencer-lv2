@@ -37,14 +37,17 @@ void VelocityLFO::setCurveLength(int curveLength)
 {
 	this->curveLength = curveLength;
 }
+
 void VelocityLFO::setPhase(double phase)
 {
     this->phase = phase;
 }
 
-void VelocityLFO::setFrequency(double frequency)
+void VelocityLFO::setFrequency(double newFrequency)
 {
-    this->frequency = frequency;
+	if (newFrequency != frequency) {
+		frequency = 1.0 / newFrequency;
+	}
 }
 
 double VelocityLFO::getSample()

@@ -737,6 +737,30 @@
     [
         a lv2:InputPort, lv2:ControlPort ;
         lv2:index 35 ;
+        lv2:name """Meta Speed""" ;
+        lv2:symbol "metaSpeed" ;
+        lv2:default 1 ;
+        lv2:minimum 0 ;
+        lv2:maximum 2 ;
+        lv2:portProperty lv2:enumeration ;
+        lv2:scalePoint [
+            rdfs:label  """Half Time""" ;
+            rdf:value 0 ;
+        ] ,
+        [
+            rdfs:label  """Normal Speed""" ;
+            rdf:value 1 ;
+        ] ,
+        [
+            rdfs:label  """Double Time""" ;
+            rdf:value 2 ;
+        ] ;
+
+        lv2:portProperty lv2:integer ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 36 ;
         lv2:name """Panic""" ;
         lv2:symbol "panic" ;
         lv2:default 0.000000 ;
@@ -749,7 +773,7 @@
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 36 ;
+        lv2:index 37 ;
         lv2:name """Enabled""" ;
         lv2:symbol "enabled" ;
         lv2:default 1.000000 ;

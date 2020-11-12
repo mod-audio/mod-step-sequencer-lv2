@@ -17,6 +17,7 @@ PluginClock::PluginClock() :
 	internalBpm(120.0),
 	previousBpm(0),
 	sampleRate(48000.0),
+	frequency(1.0),
 	previousSyncMode(0),
 	barLength(4),
 	previousBeat(0),
@@ -127,7 +128,9 @@ void PluginClock::setNumBarsElapsed(uint32_t numBarsElapsed)
 
 void PluginClock::calcPeriod()
 {
-	period = static_cast<uint32_t>((sampleRate * (60.0f / (bpm * (divisionValue/2.f))))* 2.0);
+	frequency = (60.0f / (bpm * (divisionValue/2.f))) * 2.0;
+	//period = static_cast<uint32_t>((sampleRate * (60.0f / (bpm * (divisionValue/2.f)))) * 2.0);
+	period = static_cast<uint32_t>(sampleRate * frequency);
 	halfWavelength = static_cast<uint32_t>(period / 2.0f);
 	quarterWaveLength = static_cast<uint32_t>(halfWavelength / 2.0f);
 	period = (period <= 0) ? 1 : period;
@@ -166,6 +169,11 @@ int PluginClock::getSyncMode() const
 float PluginClock::getInternalBpmValue() const
 {
 	return internalBpm;
+}
+
+float PluginClock::getFrequency()
+{
+	return frequency;
 }
 
 int* PluginClock::getDivision()

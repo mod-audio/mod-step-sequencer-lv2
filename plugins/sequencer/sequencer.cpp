@@ -202,6 +202,11 @@ void Sequencer::setMetaQuantizeValue(int value)
 	metaQuantizeValue = value;
 }
 
+void Sequencer::setMetaSpeed(int value)
+{
+	metaSpeed = value;
+}
+
 void Sequencer::setPanic(bool value)
 {
 	panic = value;
@@ -243,6 +248,7 @@ void Sequencer::setParameters()
     }
 
     clock.setDivision((int)variables[1]);
+	velocityHandler->setCurveFrequency(clock.getFrequency());
     noteLength   = variables[2];
     octaveSpread = variables[3];
     clock.setSwing(variables[4]);
@@ -384,6 +390,11 @@ int Sequencer::getMetaMode() const
 int Sequencer::getMetaQuantizeValue() const
 {
 	return metaQuantizeValue;
+}
+
+int Sequencer::getMetaSpeed() const
+{
+	return metaSpeed;
 }
 
 bool Sequencer::getPanic() const
@@ -661,11 +672,15 @@ void Sequencer::process(const float **cvInputs, const MidiEvent* events, uint32_
 
 					if (sequencerEnabled) {
 
-						metaTranspose = 0;
-						for (unsigned t = 0; t < (unsigned)metaRecorder->getNumTakes(); t++) {
-							if (transposeRecLength[t] > 0) { //TODO can remove this?
-								metaTranspose += transposeRecording[t][transposeIndex[t]];
-								transposeIndex[t] = (transposeIndex[t] + 1) % transposeRecLength[t];
+						unsigned speed = (metaSpeed == DOUBLE_TIME) ? 2 : 1;
+
+						if (metaSpeed == NORMAL_SPEED || (metaSpeed == HALF_TIME && notePlayed % 2 == 0) || metaSpeed == DOUBLE_TIME) {
+							metaTranspose = 0;
+							for (unsigned t = 0; t < (unsigned)metaRecorder->getNumTakes(); t++) {
+								if (transposeRecLength[t] > 0) { //TODO can remove this?
+									metaTranspose += transposeRecording[t][transposeIndex[t]];
+									transposeIndex[t] = (transposeIndex[t] + speed) % transposeRecLength[t];
+								}
 							}
 						}
 

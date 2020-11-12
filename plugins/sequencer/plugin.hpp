@@ -44,6 +44,7 @@ public:
 		paramMetaRecord,
 		paramMetaMode,
 		paramMetaQuantizeValue,
+		paramMetaSpeed,
 		paramPanic,
 		paramEnabled,
 		paramCount

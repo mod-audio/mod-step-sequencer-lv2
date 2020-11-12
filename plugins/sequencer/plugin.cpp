@@ -545,6 +545,26 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 				channels[2].value = 0.125;
 			}
 			break;
+		case paramMetaSpeed:
+			parameter.hints = kParameterIsAutomable | kParameterIsInteger;
+			parameter.name = "Meta Speed";
+			parameter.symbol = "metaSpeed";
+			parameter.ranges.def = 1;
+			parameter.ranges.min = 0;
+			parameter.ranges.max = 2;
+			parameter.enumValues.count = 3;
+			parameter.enumValues.restrictedMode = true;
+			{
+				ParameterEnumerationValue* const channels = new ParameterEnumerationValue[3];
+				parameter.enumValues.values = channels;
+				channels[0].label = "Half Time";
+				channels[0].value = 0;
+				channels[1].label = "Normal Speed";
+				channels[1].value = 1;
+				channels[2].label = "Double Time";
+				channels[2].value = 2;
+			}
+			break;
 		case paramPanic:
 			parameter.hints      = kParameterIsBoolean | kParameterIsTrigger;
 			parameter.name       = "Panic";
@@ -650,6 +670,8 @@ float PluginSequencer::getParameterValue(uint32_t index) const
 			return sequencer->getMetaMode();
 		case paramMetaQuantizeValue:
 			return sequencer->getMetaQuantizeValue();
+		case paramMetaSpeed:
+			return sequencer->getMetaSpeed();
 		case paramPanic:
 			return sequencer->getPanic();
 		case paramEnabled:
@@ -758,6 +780,9 @@ void PluginSequencer::setParameterValue(uint32_t index, float value)
 			break;
 		case paramMetaQuantizeValue:
 			sequencer->setMetaQuantizeValue(value);
+			break;
+		case paramMetaSpeed:
+			sequencer->setMetaSpeed(value);
 			break;
 		case paramPanic:
 			sequencer->setPanic(value);
