@@ -101,7 +101,7 @@ struct Plugin::PrivateData {
 #endif
           callbacksPtr(nullptr),
           writeMidiCallbackFunc(nullptr),
-		  requestParameterChangeFunc(nullptr),
+          requestParameterChangeFunc(nullptr),
           bufferSize(d_lastBufferSize),
           sampleRate(d_lastSampleRate)
     {
