@@ -749,6 +749,10 @@ public:
     bool writeMidiEvent(const MidiEvent& midiEvent) noexcept;
 #endif
 
+
+#if DISTRHO_PLUGIN_WANT_PARAMETER_REQUEST
+	bool requestParameterValueChange(const uint32_t index, const float value) noexcept;
+#endif
 protected:
    /* --------------------------------------------------------------------------------------------------------
     * Information */
