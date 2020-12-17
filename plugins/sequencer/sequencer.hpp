@@ -228,6 +228,8 @@ private:
 	float prevParameter[18];
 	float lfo1Value = 0.0;
 	float lfo2Value = 0.0;
+	float prevModulation1 = 0.0;
+	float prevModulation2 = 0.0;
 
 	bool recording = false;
 	bool playing = false;

@@ -815,7 +815,6 @@ void PluginSequencer::run(const float** cvInputs, float**, uint32_t n_frames,
 	sequencer->process(cvInputs, events, eventCount, n_frames);
 
 	for (unsigned r = 0; r < (unsigned)sequencer->getNumRequests(); r++) {
-		//std::cout << "modulating parameter index: " << sequencer->getRequestValueChangeParameterIndex(r) << std::endl;
 		requestParameterValueChange(sequencer->getRequestValueChangeParameterIndex(r), sequencer->getRequestValueChangeValue(r));
 	}
 

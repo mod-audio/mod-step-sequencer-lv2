@@ -261,17 +261,21 @@ void Sequencer::setParameters()
 
     int param = connectLfo1;
     if (param > 0) {
-        float lfoValue   = maxParamValue[param] * lfo1Depth * (lfo1Value * 0.1);
-        variables[param] = variables[param] + lfoValue;
-        variables[param] = applyRange(variables[param], minParamValue[param], maxParamValue[param]);
-		setRequestValueChange(parameterIndex[param], variables[param]);
+		variables[param]    -= prevModulation1;
+        float lfoValue       = maxParamValue[param] * lfo1Depth * (lfo1Value * 0.1);
+		float modulatedValue = variables[param] + lfoValue;
+        modulatedValue       = applyRange(modulatedValue, minParamValue[param], maxParamValue[param]);
+		prevModulation1      = modulatedValue - variables[param];
+		setRequestValueChange(parameterIndex[param], modulatedValue);
     }
     param = connectLfo2;
     if (param > 0) {
-        float lfoValue   = maxParamValue[param] * lfo2Depth * (lfo2Value * 0.1);
-        variables[param] = variables[param] + lfoValue;
-        variables[param] = applyRange(variables[param], minParamValue[param], maxParamValue[param]);
-		setRequestValueChange(parameterIndex[param], variables[param]);
+		variables[param]    -= prevModulation2;
+        float lfoValue       = maxParamValue[param] * lfo2Depth * (lfo2Value * 0.1);
+		float modulatedValue = variables[param] + lfoValue;
+        modulatedValue       = applyRange(modulatedValue, minParamValue[param], maxParamValue[param]);
+		prevModulation2      = modulatedValue - variables[param];
+		setRequestValueChange(parameterIndex[param], modulatedValue);
     }
 }
 
