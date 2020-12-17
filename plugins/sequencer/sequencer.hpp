@@ -102,6 +102,7 @@ public:
 	void  setMetaSpeed(int value);
 	void  setPanic(bool value);
 	void  setEnabled(bool value);
+	void  setRequestValueChange(int index, float value);
 	float applyRange(float numberToCheck, float min, float max);
 	void  setParameters();
 	float getModulatableParameters(int index) const;
@@ -132,6 +133,9 @@ public:
 	int   getMetaSpeed() const;
 	bool  getPanic() const;
 	bool  getEnabled() const;
+	float getRequestValueChangeValue(int index) const;
+	int   getRequestValueChangeParameterIndex(int index) const;
+	int   getNumRequests() const;
 	void  transmitHostInfo(const bool playing, const float beatsPerBar,
 	const int beat, const float barBeat, const double bpm);
 	void  reset();
@@ -227,9 +231,15 @@ private:
 
 	bool recording = false;
 	bool playing = false;
+	bool paramModulated1 = false;
+	bool paramModulated2 = false;
+	int  requestIndex = 0;
+
+	float bufferedRequests[2][4];
 
     float minParamValue[18] = {0, 0, 0, 1, 25, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0};
-    float maxParamValue[18] = {0, 10, 0.99, 4, 75, 1, 2, 70, 1, 0, 127, 127, 127, 127, 127, 127, 127, 127};
+    float maxParamValue[18] = {0, 12, 0.99, 4, 75, 1, 2, 70, 1, 0, 127, 127, 127, 127, 127, 127, 127, 127};
+    float parameterIndex[18] = {0, 6, 9, 11, 13, 14, 15, 17, 18, 20, 21, 22, 23, 24, 25, 26, 27, 28};
 
 	PrevState prevState;
 	SeqUtils utils;

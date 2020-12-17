@@ -217,6 +217,12 @@ void Sequencer::setEnabled(bool value)
 	sequencerEnabled = value;
 }
 
+void Sequencer::setRequestValueChange(int index, float value)
+{
+	bufferedRequests[0][requestIndex] = (float)index;
+	bufferedRequests[1][requestIndex] = value;
+	requestIndex++;
+}
 
 float Sequencer::applyRange(float numberToCheck, float min, float max)
 {
@@ -233,19 +239,6 @@ void Sequencer::setParameters()
 	for (unsigned p = 1; p < 18; p++) {
 		variables[p] = getModulatableParameters(p);
 	}
-
-    int param = connectLfo1;
-    if (param > 0) {
-        float lfoValue   = maxParamValue[param] * lfo1Depth * (lfo1Value * 0.1);
-        variables[param] = variables[param] + lfoValue;
-        variables[param] = applyRange(variables[param], minParamValue[param], maxParamValue[param]);
-    }
-    param = connectLfo1;
-    if (param > 0) {
-        float lfoValue   = maxParamValue[param] * lfo2Depth * (lfo2Value * 0.1);
-        variables[param] = variables[param] + lfoValue;
-        variables[param] = applyRange(variables[param], minParamValue[param], maxParamValue[param]);
-    }
 
     clock.setDivision((int)variables[1]);
 	velocityHandler->setCurveFrequency(clock.getFrequency());
@@ -265,6 +258,21 @@ void Sequencer::setParameters()
 	velocityHandler->setVelocityPattern(5, (uint8_t)variables[15]);
 	velocityHandler->setVelocityPattern(6, (uint8_t)variables[16]);
 	velocityHandler->setVelocityPattern(7, (uint8_t)variables[17]);
+
+    int param = connectLfo1;
+    if (param > 0) {
+        float lfoValue   = maxParamValue[param] * lfo1Depth * (lfo1Value * 0.1);
+        variables[param] = variables[param] + lfoValue;
+        variables[param] = applyRange(variables[param], minParamValue[param], maxParamValue[param]);
+		setRequestValueChange(parameterIndex[param], variables[param]);
+    }
+    param = connectLfo2;
+    if (param > 0) {
+        float lfoValue   = maxParamValue[param] * lfo2Depth * (lfo2Value * 0.1);
+        variables[param] = variables[param] + lfoValue;
+        variables[param] = applyRange(variables[param], minParamValue[param], maxParamValue[param]);
+		setRequestValueChange(parameterIndex[param], variables[param]);
+    }
 }
 
 float Sequencer::getModulatableParameters(int index) const
@@ -407,6 +415,21 @@ bool Sequencer::getEnabled() const
 	return sequencerEnabled;
 }
 
+float Sequencer::getRequestValueChangeValue(int index) const
+{
+	return bufferedRequests[1][index];
+}
+
+int Sequencer::getRequestValueChangeParameterIndex(int index) const
+{
+	return (int)bufferedRequests[0][index];
+}
+
+int Sequencer::getNumRequests() const
+{
+	return requestIndex;
+}
+
 void Sequencer::transmitHostInfo(const bool playing, const float beatsPerBar,
 		const int beat, const float barBeat, const double bpm)
 {
@@ -477,6 +500,8 @@ void Sequencer::process(const float **cvInputs, const MidiEvent* events, uint32_
 
 	lfo1Value = cvInputs[0][0];
 	lfo2Value = cvInputs[1][0];
+
+	requestIndex = 0;
 
 	setParameters();
 

@@ -38,7 +38,7 @@ void PluginSequencer::initParameter(uint32_t index, Parameter& parameter)
 			parameter.enumValues.count = 3;
 			parameter.enumValues.restrictedMode = true;
 			{
-				ParameterEnumerationValue* const channels = new ParameterEnumerationValue[13];
+				ParameterEnumerationValue* const channels = new ParameterEnumerationValue[3];
 				parameter.enumValues.values = channels;
 				channels[0].label = "Rest";
 				channels[0].value = 0;
@@ -804,6 +804,7 @@ void PluginSequencer::activate()
 void PluginSequencer::run(const float** cvInputs, float**, uint32_t n_frames,
                               const MidiEvent* events, uint32_t eventCount)
 {
+
 	sequencer->emptyMidiBuffer();
 
 	// Check if host supports Bar-Beat-Tick position
@@ -812,6 +813,11 @@ void PluginSequencer::run(const float** cvInputs, float**, uint32_t n_frames,
 	sequencer->transmitHostInfo(position.playing, position.bbt.beatsPerBar, position.bbt.beat, position.bbt.barBeat, static_cast<float>(position.bbt.beatsPerMinute));
 
 	sequencer->process(cvInputs, events, eventCount, n_frames);
+
+	for (unsigned r = 0; r < (unsigned)sequencer->getNumRequests(); r++) {
+		//std::cout << "modulating parameter index: " << sequencer->getRequestValueChangeParameterIndex(r) << std::endl;
+		requestParameterValueChange(sequencer->getRequestValueChangeParameterIndex(r), sequencer->getRequestValueChangeValue(r));
+	}
 
 	struct MidiBuffer buffer = sequencer->getMidiBuffer();
 	for (unsigned x = 0; x < buffer.numBufferedEvents + buffer.numBufferedThroughEvents; x++) {
