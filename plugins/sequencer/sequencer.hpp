@@ -70,6 +70,27 @@ public:
         NORMAL_SPEED,
         DOUBLE_TIME
 	};
+	enum LFOAssignments {
+		NONE = 0,
+		DIVISION,
+		NOTELENGTHPARAM,
+		OCTAVESPREAD,
+		SWING,
+		RANDOMIZETIMMING,
+		VELOCITYMODE,
+		VELOCITYCURVE,
+		CURVEDEPTH,
+		CURVECLIP,
+		PATTERNVEL1,
+		PATTERNVEL2,
+		PATTERNVEL3,
+		PATTERNVEL4,
+		PATTERNVEL5,
+		PATTERNVEL6,
+		PATTERNVEL7,
+		PATTERNVEL8
+	};
+
 	Sequencer(double sampleRate);
 	~Sequencer();
 
@@ -104,7 +125,9 @@ public:
 	void  setEnabled(bool value);
 	void  setRequestValueChange(int index, float value);
 	float applyRange(float numberToCheck, float min, float max);
+    float castParameters(int parameterIndex, float value);
 	void  setParameters();
+	void  setParameterRanges(int parameterIndex);
 	float getModulatableParameters(int index) const;
 	int   getNotemode() const;
 	int   getMode() const;
@@ -147,6 +170,12 @@ private:
 	struct PrevState {
 		uint8_t midiNotes[NUM_STATES][NUM_VOICES][3];
 		int numAcitveNotes;
+	};
+
+	struct ParameterRange
+	{
+		float min;
+		float max;
 	};
 
 	uint32_t* period;
@@ -207,7 +236,7 @@ private:
 	float noteLength = 0.8;
 	int octaveSpread = 1;
 	int playMode = 0;
-	float swing = 0.5;
+	float swing = 0.0;
 	int randomizeTiming = 0;
 	int velocityMode = 0;
 	int velocityCurve = 0;
@@ -231,6 +260,8 @@ private:
 	float prevModulation1 = 0.0;
 	float prevModulation2 = 0.0;
 
+    int prevParam1 = 0;
+    int prevParam2 = 0;
 	bool recording = false;
 	bool playing = false;
 	bool paramModulated1 = false;
@@ -238,12 +269,10 @@ private:
 	int  requestIndex = 0;
 
 	float bufferedRequests[2][4];
-
-    float minParamValue[18] = {0, 0, 0, 1, 25, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0};
-    float maxParamValue[18] = {0, 12, 0.99, 4, 75, 1, 2, 70, 1, 0, 127, 127, 127, 127, 127, 127, 127, 127};
-    float parameterIndex[18] = {0, 6, 9, 11, 13, 14, 15, 17, 18, 20, 21, 22, 23, 24, 25, 26, 27, 28};
+    float parameterIndex[18] = {0, 6, 8, 9, 12, 13, 14, 15, 16, 17, 20, 21, 22, 23, 24, 25, 26, 27};
 
 	PrevState prevState;
+	ParameterRange parameterRange;
 	SeqUtils utils;
 	Pattern **octavePattern;
 	MidiHandler midiHandler;
