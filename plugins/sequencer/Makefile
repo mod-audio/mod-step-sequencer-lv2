@@ -15,7 +15,7 @@ LV2_DIR ?= $(LIBDIR)/lv2
 # --------------------------------------------------------------
 # Project name, used for binaries
 
-NAME = mod-sequencer
+NAME = mod-step-sequencer
 
 # --------------------------------------------------------------
 # Plugin types to build
