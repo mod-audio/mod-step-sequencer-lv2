@@ -21,7 +21,7 @@ plugins: libs
 ifneq ($(CROSS_COMPILING),true)
 gen: plugins dpf/utils/lv2_ttl_generator
 	#@$(CURDIR)/dpf/utils/generate-ttl.sh
-	cp -r static-lv2-data/mod-sequencer.lv2/* bin/mod-sequencer.lv2/
+	cp -r static-lv2-data/mod-step-sequencer.lv2/* bin/mod-step-sequencer.lv2/
 ifeq ($(MACOS),true)
 	@$(CURDIR)/dpf/utils/generate-vst-bundles.sh
 endif
@@ -30,7 +30,7 @@ dpf/utils/lv2_ttl_generator:
 else
 gen: plugins dpf/utils/lv2_ttl_generator.exe
 	#$(CURDIR)/dpf/utils/generate-ttl.sh
-	cp -r static-lv2-data/mod-sequencer.lv2/* bin/mod-sequencer.lv2/
+	cp -r static-lv2-data/mod-step-sequencer.lv2/* bin/mod-step-sequencer.lv2/
 
 dpf/utils/lv2_ttl_generator.exe:
 	$(MAKE) -C dpf/utils/lv2-ttl-generator WINDOWS=true

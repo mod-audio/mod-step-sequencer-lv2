@@ -1,16 +1,16 @@
 #include "velocityLFO.hpp"
 
 VelocityLFO::VelocityLFO(double samplerate, double frequency, double phase) :
-frequency(frequency),
-phase(phase),
-sample(0),
-samplerate(samplerate),
-x1(0.00000001),
-velocityCurve(0),
-curveLength(1),
-frame(0),
-curveClip(false),
-clip(false)
+    frequency(frequency),
+    phase(phase),
+    sample(0),
+    samplerate(samplerate),
+    x1(0.00000001),
+    velocityCurve(0),
+    curveLength(1),
+    frame(0),
+    curveClip(false),
+    clip(false)
 {
 }
 
@@ -20,22 +20,22 @@ VelocityLFO::~VelocityLFO()
 
 void VelocityLFO::setVelocityCurve(float velocityCurve)
 {
-	this->velocityCurve = velocityCurve;
+    this->velocityCurve = velocityCurve;
 }
 
 void VelocityLFO::setCurveDepth(float curveDepth)
 {
-	this->curveDepth = curveDepth;
+    this->curveDepth = curveDepth;
 }
 
 void VelocityLFO::setCurveClip(bool curveClip)
 {
-	this->curveClip = curveClip;
+    this->curveClip = curveClip;
 }
 
 void VelocityLFO::setCurveLength(int curveLength)
 {
-	this->curveLength = curveLength;
+    this->curveLength = curveLength;
 }
 
 void VelocityLFO::setPhase(double phase)
@@ -45,9 +45,9 @@ void VelocityLFO::setPhase(double phase)
 
 void VelocityLFO::setFrequency(double newFrequency)
 {
-	if (newFrequency != frequency) {
-		frequency = 1.0 / newFrequency;
-	}
+    if (newFrequency != frequency) {
+        frequency = 1.0 / newFrequency;
+    }
 }
 
 double VelocityLFO::getSample()
@@ -57,27 +57,27 @@ double VelocityLFO::getSample()
 
 float VelocityLFO::getVelocityCurve()
 {
-	return velocityCurve;
+    return velocityCurve;
 }
 
 float VelocityLFO::getCurveDepth()
 {
-	return curveDepth;
+    return curveDepth;
 }
 
 bool VelocityLFO::getCurveClip()
 {
-	return curveClip;
+    return curveClip;
 }
 
 int VelocityLFO::getCurveLength()
 {
-	return curveLength;
+    return curveLength;
 }
 
 double VelocityLFO::getFrequency()
 {
-	return frequency;
+    return frequency;
 }
 
 void VelocityLFO::tick()

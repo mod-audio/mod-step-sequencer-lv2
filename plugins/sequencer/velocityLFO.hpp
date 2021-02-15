@@ -12,31 +12,31 @@ public:
     ~VelocityLFO();
     double getSample();
 
-	void   setVelocityCurve(float value);
-	void   setCurveDepth(float value);
-	void   setCurveClip(bool value);
-	void   setCurveLength(int value);
-	float  getVelocityCurve();
-	float  getCurveDepth();
-	bool   getCurveClip();
-	int    getCurveLength();
+    void   setVelocityCurve(float value);
+    void   setCurveDepth(float value);
+    void   setCurveClip(bool value);
+    void   setCurveLength(int value);
+    float  getVelocityCurve();
+    float  getCurveDepth();
+    bool   getCurveClip();
+    int    getCurveLength();
     void   tick();
     void   setFrequency(double frequency);
     void   setPhase(double phase);
     double getFrequency();
-	int    calculate();
+    int    calculate();
 private:
     double frequency;
     double phase;
     double sample;
     double samplerate;
-	double x1;
-	double velocityCurve;
-	double curveDepth; //TODO check type
-	int    curveLength;
-	int    frame;
-	bool   curveClip;
-	bool   clip;
+    double x1;
+    double velocityCurve;
+    double curveDepth; //TODO check type
+    int    curveLength;
+    int    frame;
+    bool   curveClip;
+    bool   clip;
 };
 
 #endif

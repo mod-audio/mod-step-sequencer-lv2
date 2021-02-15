@@ -28,32 +28,32 @@
 #define MIDI_SYSTEM_RESET 0xFF
 
 struct MidiBuffer {
-	unsigned maxBufferSize = MIDI_BUFFER_SIZE;
+    unsigned maxBufferSize = MIDI_BUFFER_SIZE;
 
-	MidiEvent bufferedEvents[MIDI_BUFFER_SIZE];
-	unsigned numBufferedEvents;
+    MidiEvent bufferedEvents[MIDI_BUFFER_SIZE];
+    unsigned numBufferedEvents;
 
-	MidiEvent bufferedMidiThroughEvents[MIDI_BUFFER_SIZE];
-	unsigned numBufferedThroughEvents;
+    MidiEvent bufferedMidiThroughEvents[MIDI_BUFFER_SIZE];
+    unsigned numBufferedThroughEvents;
 
-	MidiEvent midiOutputBuffer[MIDI_BUFFER_SIZE];
-	unsigned numOutputEvents;
+    MidiEvent midiOutputBuffer[MIDI_BUFFER_SIZE];
+    unsigned numOutputEvents;
 };
 
 class MidiHandler {
 public:
-	MidiHandler();
-	~MidiHandler();
-	void emptyMidiBuffer();
-	void appendMidiMessage(MidiEvent event);
-	void appendMidiThroughMessage(MidiEvent event);
-	void resetBuffer();
-	int getNumEvents();
-	void mergeBuffers();
-	//MidiEvent getMidiEvent(int index);
-	struct MidiBuffer getMidiBuffer();
+    MidiHandler();
+    ~MidiHandler();
+    void emptyMidiBuffer();
+    void appendMidiMessage(MidiEvent event);
+    void appendMidiThroughMessage(MidiEvent event);
+    void resetBuffer();
+    int getNumEvents();
+    void mergeBuffers();
+    //MidiEvent getMidiEvent(int index);
+    struct MidiBuffer getMidiBuffer();
 private:
-	MidiBuffer buffer;
+    MidiBuffer buffer;
 };
 
 #endif //_H_MIDI_HANDLER_

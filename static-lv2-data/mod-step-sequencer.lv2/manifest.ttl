@@ -3,7 +3,7 @@
 
 <http://moddevices.com/plugins/mod-devel/sequencer>
     a lv2:Plugin ;
-    lv2:binary <mod-sequencer_dsp.so> ;
-    rdfs:seeAlso <mod-sequencer_dsp.ttl> .
+    lv2:binary <mod-step-sequencer_dsp.so> ;
+    rdfs:seeAlso <mod-step-sequencer_dsp.ttl> .
 
 
