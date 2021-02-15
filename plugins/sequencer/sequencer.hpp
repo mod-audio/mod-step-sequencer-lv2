@@ -178,99 +178,6 @@ class Sequencer {
             float max;
         };
 
-        uint32_t* period;
-        uint32_t* clockPos;
-        int* division;
-        float quantizeMultiplier;
-
-        int notesPressed = 0;
-        int activeNotes = 0;
-        int notePlayed = 0;
-        int octaveMode = 0;
-
-        int transposeIndex[NUM_TAKES];
-        int transposeRecLength[NUM_TAKES];
-        uint8_t metaTranspose = 0;
-        uint8_t transposeRecording[NUM_TAKES][NUM_VOICES];
-        uint8_t midiNotes[NUM_VOICES][3];
-        uint8_t midiNotesBypassed[NUM_VOICES];
-        uint32_t noteOffBuffer[NUM_NOTE_OFF_SLOTS][4];
-
-        int SeqMode = 0;
-
-        uint8_t pitch = 0;
-        uint8_t previousMidiNote = 0;
-        uint8_t velocity = 80;
-        int transpose = 0;
-        int previousSyncMode = 0;
-        int activeNotesIndex = 0;
-        int stateIndex = 0;
-        int activeNotesBypassed = 0;
-        int timeOutTime = 5000;
-        int firstNoteTimer = 0;
-        int numActiveNotes = 0;
-        float barBeat;
-        float sampleRate = 48000;
-
-        int metaSpeed = 1;
-        bool metaRecordingEnabled = false;
-        bool metaRecording = false;
-        bool pluginEnabled = true;
-        bool first = false;
-        bool SeqEnabled = true;
-        bool latchMode = false;
-        bool previousLatch = false;
-        bool latchPlaying = false;
-        bool trigger = false;
-        bool firstNote = false;
-        bool quantizedStart = false;
-        bool resetPattern = false;
-        bool midiNotesCopied = false;
-        bool overwrite = false;
-
-        int metaRecordMode = 0;
-        int metaQuantizeValue = 0;
-        int overwriteIndex = 0;
-        int noteMode = 0;
-        int mode = 0;
-        float noteLength = 0.8;
-        int octaveSpread = 1;
-        int playMode = 0;
-        float swing = 0.0;
-        int randomizeTiming = 0;
-        int velocityMode = 0;
-        int velocityCurve = 0;
-        int maxLength = 9;
-        float curveDepth = 0.0;
-        int curveClip = 0;
-        int curveLength = 1;
-        int patternlength = 1;
-        int velocityNote[8];
-        int connectLfo1 = 0;
-        int lfo1Depth = 0;
-        int connectLfo2 = 0;
-        int lfo2Depth = 0;
-        bool sequencerEnabled = true;
-        bool panic = false;
-        float modulatableParameters[18];
-        float variables[18];
-        float prevParameter[18];
-        float lfo1Value = 0.0;
-        float lfo2Value = 0.0;
-        float prevModulation1 = 0.0;
-        float prevModulation2 = 0.0;
-
-        int prevParam1 = 0;
-        int prevParam2 = 0;
-        bool recording = false;
-        bool playing = false;
-        bool paramModulated1 = false;
-        bool paramModulated2 = false;
-        int  requestIndex = 0;
-
-        float bufferedRequests[2][4];
-        float parameterIndex[18] = {0, 6, 8, 9, 12, 13, 14, 15, 16, 17, 20, 21, 22, 23, 24, 25, 26, 27};
-
         PrevState prevState;
         ParameterRange parameterRange;
         SeqUtils utils;
@@ -279,6 +186,75 @@ class Sequencer {
         PluginClock clock;
         VelocityHandler *velocityHandler;
         MetaRecorder *metaRecorder;
+
+        uint32_t* period;
+        uint32_t* clockPos;
+        int* division;
+        float quantizeMultiplier;
+
+        int transposeIndex[NUM_TAKES];
+        int transposeRecLength[NUM_TAKES];
+        uint8_t transposeRecording[NUM_TAKES][NUM_VOICES];
+        uint8_t midiNotes[NUM_VOICES][3];
+        uint32_t noteOffBuffer[NUM_NOTE_OFF_SLOTS][4];
+
+        int notePlayed;
+        int octaveMode;
+        uint8_t metaTranspose;
+
+        int transpose;
+        int activeNotesIndex;
+        int stateIndex;
+        int numActiveNotes;
+        float barBeat;
+        float sampleRate;
+
+        int metaSpeed;
+        bool metaRecordingEnabled;
+        bool metaRecording;
+        bool firstNote;
+        bool overwrite;
+
+        int metaRecordMode;
+        int metaQuantizeValue;
+        int overwriteIndex;
+        int noteMode;
+        int mode;
+        float noteLength;
+        int octaveSpread;
+        int playMode;
+        float swing;
+        int randomizeTiming;
+        int velocityMode;
+        int velocityCurve;
+        int maxLength;
+        float curveDepth;
+        int curveClip;
+        int curveLength;
+        int patternlength;
+        int velocityNote[8];
+        int connectLfo1;
+        int lfo1Depth;
+        int connectLfo2;
+        int lfo2Depth;
+        bool sequencerEnabled;
+        bool panic;
+        float modulatableParameters[18];
+        float variables[18];
+        float prevParameter[18];
+        float lfo1Value;
+        float lfo2Value;
+        float prevModulation1;
+        float prevModulation2;
+
+        int prevParam1;
+        int prevParam2;
+        bool recording;
+        bool playing;
+        int  requestIndex;
+
+        float bufferedRequests[2][4];
+        float parameterIndex[18] = {0, 6, 8, 9, 12, 13, 14, 15, 16, 17, 20, 21, 22, 23, 24, 25, 26, 27};
 };
 
 #endif // _H_SEQUENCER_

@@ -5,7 +5,16 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 PluginSequencer::PluginSequencer()
-    : Plugin(paramCount, 0, 0), sequencer(new Sequencer(getSampleRate()))
+    : Plugin(paramCount, 0, 0), sequencer(new Sequencer(getSampleRate())),
+    next_note(0),
+    Seq_counter(0),
+    current_note(0),
+    bpm(120),
+    previousBpm(0),
+    previousHostBpm(0),
+    pitch(0),
+    trigger(false),
+    previousSyncMode(0)
 {
     sequencer->transmitHostInfo(0, 4, 1, 1, 120.0);
     sequencer->setSampleRate(static_cast<float>(getSampleRate()));

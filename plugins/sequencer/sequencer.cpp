@@ -1,6 +1,52 @@
 #include "sequencer.hpp"
 
-Sequencer::Sequencer(double sampleRate) : velocityHandler(new VelocityHandler(static_cast<float>(sampleRate)))
+Sequencer::Sequencer(double sampleRate) :
+    velocityHandler(new VelocityHandler(static_cast<float>(sampleRate))),
+    notePlayed(0),
+    octaveMode(0),
+    metaTranspose(0),
+    transpose(0),
+    activeNotesIndex(0),
+    stateIndex(0),
+    numActiveNotes(0),
+    sampleRate(48000),
+    metaSpeed(1),
+    metaRecordingEnabled(false),
+    metaRecording(false),
+    firstNote(false),
+    overwrite(false),
+    metaRecordMode(0),
+    metaQuantizeValue(0),
+    overwriteIndex(0),
+    noteMode(0),
+    mode(0),
+    noteLength(0.8),
+    octaveSpread(1),
+    playMode(0),
+    swing(0.0),
+    randomizeTiming(0),
+    velocityMode(0),
+    velocityCurve(0),
+    maxLength(9),
+    curveDepth(0.0),
+    curveClip(0),
+    curveLength(1),
+    patternlength(1),
+    connectLfo1(0),
+    lfo1Depth(0),
+    connectLfo2(0),
+    lfo2Depth(0),
+    sequencerEnabled(true),
+    panic(false),
+    lfo1Value(0.0),
+    lfo2Value(0.0),
+    prevModulation1(0.0),
+    prevModulation2(0.0),
+    prevParam1(0),
+    prevParam2(0),
+    recording(false),
+    playing(false),
+    requestIndex(0)
 {
     period = clock.getPeriod();
     clockPos = clock.getPos();
@@ -12,7 +58,7 @@ Sequencer::Sequencer(double sampleRate) : velocityHandler(new VelocityHandler(st
     clock.setDivision(7);
     clock.setSyncMode(2);
 
-    octavePattern = new Pattern*[5];
+    octavePattern = new Pattern*[NUM_OCTAVE_MODES];
 
     octavePattern[0] = new PatternUp();
     octavePattern[1] = new PatternDown();
@@ -31,8 +77,6 @@ Sequencer::Sequencer(double sampleRate) : velocityHandler(new VelocityHandler(st
         noteOffBuffer[i][NOTE_TYPE] = 0;
         noteOffBuffer[i][TIMER] = 0;
     }
-
-    memset(prevParameter, 0, sizeof(prevParameter));
 
     modulatableParameters[0] = 0;
     modulatableParameters[1] = DIVISION;
@@ -60,6 +104,11 @@ Sequencer::~Sequencer()
     metaRecorder = nullptr;
     delete velocityHandler;
     velocityHandler = nullptr;
+
+    for (unsigned i = 0; i < NUM_OCTAVE_MODES; i++) {
+        delete octavePattern[i];
+    }
+
     delete[] octavePattern;
     octavePattern = nullptr;
 }
@@ -613,15 +662,8 @@ void Sequencer::reset()
     }
 
     activeNotesIndex = 0;
-    firstNoteTimer  = 0;
     notePlayed = 0;
-    activeNotes = 0;
-    //previousLatch = 0;
-    notesPressed = 0;
-    activeNotesBypassed = 0;
-    latchPlaying = false;
     firstNote = false;
-    first = true;
 
     for (unsigned i = 0; i < NUM_VOICES; i++) {
         midiNotes[i][MIDI_NOTE] = EMPTY_SLOT;

@@ -118,16 +118,15 @@ class PluginSequencer : public Plugin {
 
         float fParams[paramCount];
         int active_notes[20];
-        int next_note = 0;
-        int Seq_counter = 0;
-        int current_note = 0;
-        double bpm = 120;
-        double previousBpm = 0;
-        double previousHostBpm = 0;
-        uint8_t pitch = 0;
-
-        bool trigger = false;
-        int previousSyncMode = 0;
+        int next_note;
+        int Seq_counter;
+        int current_note;
+        double bpm;
+        double previousBpm;
+        double previousHostBpm;
+        uint8_t pitch;
+        bool trigger;
+        int previousSyncMode;
 
         DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PluginSequencer)
 };

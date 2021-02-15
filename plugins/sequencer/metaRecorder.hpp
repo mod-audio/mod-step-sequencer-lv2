@@ -15,42 +15,44 @@
 
 class MetaRecorder {
 public:
-	MetaRecorder(uint32_t *period, uint32_t *clockPos, int *division);
-	MetaRecorder();
-	~MetaRecorder();
-	bool recordingQued();
-	uint8_t getRecordedTranspose(int take, int index);
-	int getRecLength(int take);
-	int getNumTakes();
-	int getRecordingMode() const;
-	void setQue(bool recQued);
-	void setBeatPos(float beatPos);
-	void clearRecording();
-	void clearAll();
-	void calculateQuantizeCoef();
-	void setRecordingMode(int mode);
-	void record(uint8_t transpose);
+    MetaRecorder(uint32_t *period, uint32_t *clockPos, int *division);
+    MetaRecorder();
+    ~MetaRecorder();
+    bool recordingQued();
+    uint8_t getRecordedTranspose(int take, int index);
+    int getRecLength(int take);
+    int getNumTakes();
+    int getRecordingMode() const;
+    void setQue(bool recQued);
+    void setBeatPos(float beatPos);
+    void clearRecording();
+    void clearAll();
+    void calculateQuantizeCoef();
+    void setRecordingMode(int mode);
+    void record(uint8_t transpose);
 private:
-	enum MetaRecModes {
-		STOP_RECORDING = 0,
-		START_RECORDING
-	};
-	float coef;
-	float beatPos;
-	bool recording = false;
-	bool newRecording = false;
-	bool recQued = false;
-	int recMode = 0;
-	int prevRecMode = 0;
-	int recLength[NUM_TAKES];
-	int recIndex = 0;
-	int take;
-	uint8_t transpose = 0;
-	uint8_t recordedTranspose[NUM_TAKES][BUFFER_LENGTH];
+    enum MetaRecModes {
+        STOP_RECORDING = 0,
+        START_RECORDING
+    };
+    float coef;
+    float beatPos;
+    int recMode;
+    int take;
+    int prevRecMode;
+    int recIndex;
+    uint8_t transpose;
 
-	int *division;
-	uint32_t *clockPos;
-	uint32_t *period;
+    bool recording;
+    bool newRecording;
+    bool recQued;
+
+    int recLength[NUM_TAKES];
+    uint8_t recordedTranspose[NUM_TAKES][BUFFER_LENGTH];
+
+    int *division;
+    uint32_t *clockPos;
+    uint32_t *period;
 };
 
 #endif //_H_META_RECORDER_
